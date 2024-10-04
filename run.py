@@ -8,6 +8,10 @@ from models.basemodel import BaseModel, Base, DATABASE_URI
 from models.company import Company
 from models.client import Client
 from models.items import Items
+from models.orders import Orders
+from models.order_items import OrderItems
+from models.payments import Payments
+from models.address import Address
 
 # Create SQLAlchemy engine
 engine = create_engine(DATABASE_URI)

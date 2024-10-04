@@ -1,8 +1,9 @@
-from models import BaseModel
-from sqlalchemy import Column, Integer, String
+from .basemodel import BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
+
 
 class Address(BaseModel):
-    '''Address class'''
+    """Address Model"""
     __tablename__ = 'address'
     address_id = Column(Integer, primary_key=True)
     client_id = Column(Integer, ForeignKey('client.id'), nullable=False)

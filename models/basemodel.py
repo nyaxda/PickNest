@@ -8,7 +8,8 @@ from sqlalchemy import Column, Integer, DateTime, create_engine
 
 DATABASE_URI = 'mysql+pymysql://portfolio:holberton@localhost/picknest'
 
-engine = create_engine('mysql+pymysql://picknest:holberton@localhost/portfolio')
+engine = create_engine(
+    'mysql+pymysql://picknest:holberton@localhost/portfolio')
 
 Session = sessionmaker(bind=engine)
 session = Session()
