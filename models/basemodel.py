@@ -6,6 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, DateTime, create_engine
 
+DATABASE_URI = 'mysql+mysqldb://portfolio:holberton@localhost/picknest'
+
 engine = create_engine('mysql+mysqldb://username:password@localhost/database')
 Session = sessionmaker(bind=engine)
 session = Session()
