@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Run Module"""
 
 from sqlalchemy import create_engine
