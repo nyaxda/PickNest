@@ -11,15 +11,16 @@ Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
 
+
 class BaseModel(Base):
     """Baseclass for other classes to inherit from"""
-	# __abstract__ = True ensures that the model is not mapped to the database
+    # __abstract__ = True ensures that the model is not mapped to the database
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow,
                         onupdate=datetime.utcnow)
-    
+
     def save(self):
         """Save the current instance to the storage"""
         try:
@@ -45,7 +46,7 @@ class BaseModel(Base):
             session.commit()
         except Exception as e:
             print(f"Error occured during update: {e}")
-    
+
     def to_dict(self):
         """Dictionary representation of instance"""
         try:
