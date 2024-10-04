@@ -2,7 +2,7 @@
 """Items Module"""
 
 from sqlalchemy import Column, String, Integer, ForeignKey
-from basemodel import BaseModel
+from .basemodel import BaseModel
 
 
 class Items(BaseModel):

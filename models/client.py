@@ -2,7 +2,7 @@
 """Client Module"""
 
 from sqlalchemy import Column, String
-from basemodel import BaseModel
+from .basemodel import BaseModel
 
 
 class Client(BaseModel):
