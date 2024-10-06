@@ -1,10 +1,21 @@
 mysql-8.0.28-macos11-x86_64.dmg
+<<<<<<< HEAD
 models/mysql-8.0.26-macos11-x86_64.dmg
 models/__pycache__/__init__.cpython-312.pyc
+=======
+models/__pycache__/__init__.cpython-312.pyc
+models/__pycache__/address.cpython-312.pyc
+>>>>>>> main
 models/__pycache__/basemodel.cpython-312.pyc
 models/__pycache__/client.cpython-312.pyc
 models/__pycache__/company.cpython-312.pyc
 models/__pycache__/items.cpython-312.pyc
+<<<<<<< HEAD
+=======
+models/__pycache__/order_items.cpython-312.pyc
+models/__pycache__/orders.cpython-312.pyc
+models/__pycache__/payments.cpython-312.pyc
+>>>>>>> main
 venv/pyvenv.cfg
 venv/bin/activate
 venv/bin/activate.csh
