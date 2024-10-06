@@ -1,5 +1,6 @@
-from .basemodel import BaseModel
 from sqlalchemy import Column, String, Enum, Integer, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from .basemodel import BaseModel
 
 
 class Payments(BaseModel):
@@ -15,3 +16,6 @@ class Payments(BaseModel):
     status = Column(Enum('Completed', 'Failed', 'Flagged'))
     transaction_reference_number = Column(Integer, nullable=False)
     Currency = Column(String(255), nullable='False')
+
+    # Relationship to Orders
+    order = relationship("Orders", back_populates="payment")

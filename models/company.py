@@ -2,6 +2,7 @@
 """company module"""
 
 from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 from .basemodel import BaseModel
 
 
@@ -19,3 +20,6 @@ class Company(BaseModel):
     state = Column(String(255), nullable=False)
     zip = Column(String(20), nullable=False)
     country = Column(String(255), nullable=False)
+
+    # Relationship to Items
+    items = relationship("Items", back_populates="company")

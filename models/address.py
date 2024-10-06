@@ -1,5 +1,6 @@
 from .basemodel import BaseModel
 from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 
 class Address(BaseModel):
@@ -13,3 +14,9 @@ class Address(BaseModel):
     state = Column(String(255), nullable=False)
     postal_code = Column(String(255), nullable=False)
     country = Column(String(255), nullable=False)
+
+    # Relationship to Client
+    client = relationship("Client", back_populates="addresses")
+
+    # Relationship to Orders
+    orders = relationship("Orders", back_populates="shipping_address")

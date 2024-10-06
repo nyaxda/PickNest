@@ -2,6 +2,7 @@
 """Items Module"""
 
 from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 from .basemodel import BaseModel
 
 
@@ -14,3 +15,7 @@ class Items(BaseModel):
     description = Column(String(255), nullable=False)
     category = Column(String(255), nullable=False)
     SKU = Column(String(255), nullable=False)
+
+    # Relationship to Company and OrderItems
+    company = relationship("Company", back_populates="items")
+    order_items = relationship("OrderItems", back_populates="items")

@@ -2,6 +2,7 @@
 """Items Module"""
 
 from sqlalchemy import Column, Integer, ForeignKey, Enum
+from sqlalchemy.orm import relationship
 from .basemodel import BaseModel
 
 
@@ -13,3 +14,9 @@ class Orders(BaseModel):
                                  ForeignKey('address.id'), nullable=False)
     status = Column(Enum('Pending',
                          'Shipped', 'Delivered', 'Cancelled'), nullable=False)
+
+    # Relatioship to Client, Address, OrderItems, and Payments
+    client = relationship("Client", back_populates="orders")
+    shipping_address = relationship("Address", back_populates="orders")
+    order_items = relationship("OrderItems", back_populates="orders")
+    payment = relationship("Payments", back_populates="order")
