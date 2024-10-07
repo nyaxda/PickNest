@@ -28,7 +28,7 @@ class BaseModel(Base):
                 models.storage.new(self)
             models.storage.save()
         except Exception as e:
-            models.storage._models.Storage__session.rollback()
+            models.storage.rollback()
             print(f"Error occured during save: {e}")
 
     def delete(self):
