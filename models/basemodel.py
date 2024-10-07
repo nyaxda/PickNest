@@ -5,14 +5,10 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, DateTime, create_engine
+import models
 
 DATABASE_URI = 'mysql+pymysql://portfolio:holberton@localhost/picknest'
 
-engine = create_engine(
-    'mysql+pymysql://picknest:holberton@localhost/portfolio')
-
-Session = sessionmaker(bind=engine)
-session = Session()
 Base = declarative_base()
 
 
@@ -26,29 +22,30 @@ class BaseModel(Base):
                         onupdate=datetime.utcnow)
 
     def save(self):
-        """Save the current instance to the storage"""
+        """Save the current instance to the models.storage"""
         try:
             if not self.id:
-                session.add(self)
-                session.commit()
+                models.storage.new(self)
+            models.storage.save()
         except Exception as e:
-            session.rollback()
+            models.storage._models.Storage__session.rollback()
             print(f"Error occured during save: {e}")
 
     def delete(self):
-        """Delete instance from storage"""
+        """Delete instance from models.storage"""
         try:
-            session.delete(self)
-            session.commit()
+            models.storage.delete(self)
+            models.storage.save()
         except Exception as e:
-            session.rollback()
+            models.storage.rollback()
             print(f"Error occured during delete: {e}")
 
     def update(self):
-        """Update instance to storage"""
+        """Update instance to models.storage"""
         try:
-            session.commit()
+            models.storage.save()
         except Exception as e:
+            models.storage.rollback()
             print(f"Error occured during update: {e}")
 
     def to_dict(self):
