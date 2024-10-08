@@ -9,6 +9,7 @@ from .basemodel import BaseModel
 class Client(BaseModel):
     """Client Model"""
     __tablename__ = 'client'
+    public_id = Column(String(255), nullable=False)
     firstname = Column(String(255), nullable=False)
     middlename = Column(String(255), nullable=True)
     lastname = Column(String(255), nullable=False)
