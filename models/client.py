@@ -11,6 +11,8 @@ class Client(BaseModel):
     __tablename__ = 'client'
     public_id = Column(String(255), nullable=False)
     firstname = Column(String(255), nullable=False)
+    middlename = Column(String(255), nullable=True)
+    lastname = Column(String(255), nullable=False)
     username = Column(String(255), nullable=False)
     hashedpassword = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False)

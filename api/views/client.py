@@ -1,103 +1,76 @@
 #!/usr/bin/python3
-"""user view path
-"""
+"""Client Module"""
+
 from api.views import app_views
-from models.client import Client
 from models import storage
-from flask import request, make_request, jsonify
+from models.client import Client
+from flask import jsonify, abort, request, make_response
 
-@token_required
-app_views.route('/clients', strict_slashes=False)
-def total_clients():
-    """get all clients in storage"""
-    clients = storage.all(Client)
 
-    json_clients = []
+@app_views.route('/clients',
+                 methods=['GET'], strict_slashes=False)
+def get_clients():
+    """Retrieve list of all clients"""
+    all_clients = storage.all(Client).values()
+    list_clients = [client.to_dict() for client in all_clients]
+    return jsonify(list_clients)
 
-    for client in clients:
-        json_clients.append(client.to_json())
 
-    return jsonify({'clients': json_clients})
+@app_views.route('/clients/<client_id>',
+                 methods=['GET'], strict_slashes=False)
+def get_client(client_id):
+    """Retrieves a client"""
+    client = storage.get(Client, client_id)
+    if not client:
+        abort(404)
+    return jsonify(client.to_dict())
 
-@token_required
-app_views.route('/clients/<id>', strict_slashes=False)
-def get_single_client(id):
-    """gets a single client"""
-    client = storage.get(Client, id)
-    return jsonify({'client': client})
 
-app_views.route('/clients', methods=['POST'], strict_slashes=False)
+@app_views.route('/clients',
+                 methods=['POST'], strict_slashes=False)
 def add_client():
-    """add user to database"""
+    """Creates a client"""
+    if not request.get_json():
+        abort(400, description="This is not a valid JSON")
+    required_fields = ['firstname', 'middlename', 'lastname',
+                       'username', 'hashed_password',
+                       'email', 'phone']
     data = request.get_json()
+    for field in required_fields:
+        if field not in data:
+            abort(400, description=f"{field} not found")
+    instance = Client(**data)
+    instance.save()
+    return make_response(jsonify(instance.to_dict()), 201)
 
-    if not data or not data.get('username') or not data.get('password'):
-        return jsonify({'message': 'Incorrect Username or Password'}), 401
 
-    hashed = bcrypt.hashpw(
-            base64.b64encode(hashlib.sha256(data.get('password')).digest()),
-            bcrypt.gensalt()
-            )
+@app_views.route('/clients/<client_id>',
+                 methods=['PUT'], strict_slashes=False)
+def update_client(client_id):
+    """Updates a client"""
+    if not request.get_json():
+        abort(404, description="Not a valid JSON")
+    ignored_fields = ['id', 'created_at', 'updated_at']
 
-    client = Client(
-            public_id=str(uuid.uuid4()),
-            email=data.get('email'),
-            hashed_password=hashed,
-            full_names=data.get('full_names'),
-            phone=data.get('phone'),
-            )
-
-    storage.new(client)
-    storage.save()
-    return jsonify({'message': 'User added successfully'})
-
-@token_required
-app_views.route('/clients/<id>', methods=['POST'], strict_slashes=False)
-def update_client(id):
-    """updates user"""
+    client = storage.get(Client, client_id)
+    if not client:
+        abort(400, description="Client not found")
     data = request.get_json()
-    if not data:
-        return jsonify({'message': 'Invalid input'}), 404
-
-    client = storage.get(Client, id)
-    if not client:
-        return jsonify({'Error': 'No Client Found'})
-    # Get the client to update
-    client = storage.get(Client, id)
-    if not client:
-        return jsonify({'Error': 'No Client Found'}), 404
-
-    # Update only the fields provided in the request
-    if data.get('email'):
-        client.email = data.get('email')
-    
-    if data.get('full_names'):
-        client.full_names = data.get('full_names')
-
-    if data.get('phone'):
-        client.phone = data.get('phone')
-
-    if data.get('password'):
-        # Hash the new password before updating
-        hashed_password = bcrypt.hashpw(
-            base64.b64encode(hashlib.sha256(data.get('password').encode()).digest()),
-            bcrypt.gensalt()
-        )
-        client.hashed_password = hashed_password
-
+    for key, value in data.items():
+        if key not in ignored_fields:
+            setattr(client, key, value)
     storage.save()
+    return make_response(jsonify(client.to_dict()), 200)
 
-    return jsonify({'message': 'Client updated successfully'}), 200
 
-@token_required
-app_views.route('/clients/<id>', methods=['DELETE'], strict_slashes=False)
-def update_client(id):
-    """deletes user"""
-    client = storage.get(Client, id)
+@app_views.route('/clients/<client_id>',
+                 methods=['DELETE'], strict_slashes=False)
+def delete_client(client_id):
+    """Deletes a client"""
+    client = storage.get(Client, client_id)
     if not client:
-        return jsonify({'Error': 'No Client Found'})
-
+        abort(404, description="No client found")
     storage.delete(client)
     storage.save()
 
-    return jsonify({'message': 'Client deleted successfully'}), 200
+    return(make_response(jsonify({})), 200)

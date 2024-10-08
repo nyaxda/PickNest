@@ -1721,4 +1721,5 @@ venv/lib/python3.12/site-packages/pycparser-2.22.dist-info/RECORD
 venv/lib/python3.12/site-packages/pycparser-2.22.dist-info/top_level.txt
 venv/lib/python3.12/site-packages/pycparser-2.22.dist-info/WHEEL
 web_flask/__init__.py
-.picknest/
+models/__pycache__/storage.cpython-312.pyc
+.DS_Store
