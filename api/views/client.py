@@ -5,6 +5,7 @@ from api.views import app_views
 from models import storage
 from models.client import Client
 from flask import jsonify, abort, request, make_response
+from .token_auth import token_required
 
 
 @app.route('clients/sign_up', methods=['POST'], strict_slashes=False)
@@ -81,6 +82,7 @@ def get_clients(current_user):
     return jsonify(list_clients)
 
 
+@token_required
 @app_views.route('/clients/<client_id>',
                  methods=['GET'], strict_slashes=False)
 def get_client(current_user, client_id):
@@ -119,8 +121,11 @@ def add_client(current_user):
 @token_authorized
 @app_views.route('/clients/<client_id>',
                  methods=['PUT'], strict_slashes=False)
-def update_client(client_id):
+def update_client(current_user, client_id):
     """Updates a client"""
+    if current_user.role != 'admin':
+        return jsonify({'message': 'Unauthorized action'}), 403
+
     if not request.get_json():
         abort(404, description="Not a valid JSON")
     ignored_fields = ['id', 'created_at', 'updated_at']
