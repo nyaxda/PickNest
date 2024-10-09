@@ -16,3 +16,4 @@ class OrderItems(BaseModel):
     # Relationship to Orders and Items
     order = relationship("Orders", back_populates="order_items")
     item = relationship("Items", back_populates="order_items")
+    
