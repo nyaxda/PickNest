@@ -6,10 +6,17 @@ from models import storage
 from models.company import Company
 from flask import jsonify, abort, request, make_response
 from .token_auth import token_required
+import bcrypt
+import hashlib
+import base64
+import jwt
+from datetime import datetime, timedelta
+import json
 
 
-@app.route('companies/sign_up', methods=['POST'], strict_slashes=False)
-def sign_up() -> json:
+
+@app_views.route('companies/sign_up', methods=['POST'], strict_slashes=False)
+def company_sign_up() -> json:
     """signing up clients to have accounts"""
     data = request.get_json()
 
@@ -40,14 +47,14 @@ def sign_up() -> json:
     return jsonify({'message': 'Client registered successfully'}), 201
 
 @app_views.route('companies/login', methods=['POST'], strict_slashes=False)
-def login():
+def company_login():
     """Login route for companies"""
     data = request.get_json()
 
     if not data or not data.get('username') or not data.get('password') or not data.get('role'):
         return make_response(jsonify({'message': 'Invalid input'}), 400)
-
-    if data.get('role') != 'company':
+    role = data.get('role')
+    if role != 'company':
         return make_response(jsonify({'message': 'Invalid role'}), 401)
 
     company = Company.query.filter_by(username=data['username']).first()
@@ -61,13 +68,13 @@ def login():
 
     # Generate token
     token = jwt.encode({
-        'public_id': user.public_id,
+        'public_id': company.public_id,
         'role': role,  # Include role in the token for further route protection
         'exp': datetime.utcnow() + timedelta(minutes=10)
         }, app.config['SECRET_KEY'], algorithm='HS256')
 
     # make response header
-    res = make_response(jsonify({'message': f'{role.capitalize()} logged in successfully',)})
+    res = make_response(jsonify({'message': f'{role.capitalize()} logged in successfully'}))
     res.headers['access_token'] = token.decode('utf-8') if isinstance(token, bytes) else token
     return res
 
@@ -99,7 +106,7 @@ def get_company(current_user, company_id):
     return jsonify(company.to_dict())
 
 
-@token_authorized
+@token_required
 @app_views.route('/companies',
                  methods=['POST'], strict_slashes=False)
 def add_company(current_user):
@@ -121,7 +128,7 @@ def add_company(current_user):
     return make_response(jsonify(instance.to_dict()), 201)
 
 
-@token_authorized
+@token_required
 @app_views.route('/companies/<company_id>',
                  methods=['PUT'], strict_slashes=False)
 def update_company(current_user, company_id):
@@ -158,7 +165,7 @@ def delete_company(current_user, company_id):
 
     # check if the a company is deleting it's account associated
     # with its id
-    if current_user.role is 'company' and current_user.id != company.id:
+    if current_user.role == 'company' and current_user.id != company.id:
         return jsonify({'message': 'Unauthorized action'}), 403
 
     storage.delete(company)

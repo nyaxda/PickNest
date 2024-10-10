@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+"""Order Items model Module"""
+
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey, Column, Integer
 from .basemodel import BaseModel

@@ -5,6 +5,15 @@ from api.views import app_views
 from models import storage
 from models.client import Client
 from flask import jsonify, abort, request, make_response
+from datetime import datetime
+import uuid
+import jwt
+from .token_auth import token_required
+from functools import wraps
+import bcrypt
+import json
+import hashlib
+import base64
 from .token_auth import token_required
 
 
@@ -12,10 +21,16 @@ from .token_auth import token_required
 def sign_up() -> json:
     """signing up clients to have accounts"""
     data = request.get_json()
+    if not data:
+        return jsonify({'Error': 'Invalid JSON'}), 400
 
-    if not data or not data.get('username') or not data.get('password') or\
-            data.get('role'):
-        return jsonify({'message': 'Input not Found'}), 404
+    required_fields = ['firstname', 'middlename', 'lastname',
+                       'username', 'password',
+                       'email', 'phone']
+
+    for field in required_fields:
+        if field not in data:
+            abort(400, description=f"{field} not found")
 
     hashed = bcrypt.hashpw(
             base64.b64encode(hashlib.sha256(data.get('password')).digest()),
@@ -24,9 +39,12 @@ def sign_up() -> json:
 
     client = Client(
             public_id=str(uuid.uuid4()),
+            firstname=data.get('firstname'),
+            middlename=data.get('middlename'),
+            lastname=data.get('lastname'),
+            username=data.get('username'),
             email=data.get('email'),
             hashed_password=hashed,
-            full_names=data.get('full_names'),
             phone=data.get('phone'),
             role='client'
             )
@@ -39,14 +57,15 @@ def sign_up() -> json:
 
 @app_views.route('clients/login', methods=['POST'], strict_slashes=False)
 def login():
-    """Login route for both clients and companies"""
+    """Login route for both clients"""
     data = request.get_json()
 
-    if not data or not data.get('username') or not data.get('password') or not data.get('role'):
-        return make_response(jsonify({'message': 'Invalid input'}), 400)
+    if not data or not data.get('username') or not data.get('password'):
+        return make_response(jsonify({'message': 'Invalid username or password'}), 400)
 
-    if data.get('role') != 'client':
-        return make_response(jsonify({'message': 'Invalid role'}), 401)
+    role = data.get('role')
+    if role != 'client':
+        return jsonify({'message': 'Invalid role'}), 401
 
     user = Client.query.filter_by(username=data['username']).first()
 
@@ -60,8 +79,8 @@ def login():
     # Generate token
     token = jwt.encode({
         'public_id': user.public_id,
-        'role': role,  # Include role in the token for further route protection
-        'exp': datetime.utcnow() + timedelta(minutes=10)
+        'role': user.role,  # Include role in the token for further route protection
+        'exp': datetime.utcnow() + timedelta(minutes=120)
         }, app.config['SECRET_KEY'], algorithm='HS256')
 
     # make response header
@@ -76,24 +95,30 @@ def login():
 def get_clients(current_user):
     """Retrieve list of all clients"""
     if current_user.role != 'admin':
-        return jsonify({'message': 'Unauthorized action'}), 403
+        return jsonify({'message': 'Unauthorized access'}), 403
+
     all_clients = storage.all(Client).values()
     list_clients = [client.to_dict() for client in all_clients]
-    return jsonify(list_clients)
+    return jsonify(list_clients), 200
 
 
 @token_required
 @app_views.route('/clients/<client_id>',
                  methods=['GET'], strict_slashes=False)
 def get_client(current_user, client_id):
-    """Retrieves a client"""
-    if current_user.role != 'admin':
-        return jsonify({'message': 'Invalid access'})
+    """Retrieves a client based on id"""
+    if current_user.role not in roles:
+        return jsonify({'message': 'Unauthorized access'}), 403
 
     client = storage.get(Client, client_id)
     if not client:
         abort(404)
-    return jsonify(client.to_dict())
+
+    # ensures every client has access to their account only
+    if current_user == 'client' and current_user.id != client.id:
+        return jsonify({'message': 'Unauthorized access'}), 403
+
+    return jsonify(client.to_dict()), 200
 
 
 @token_authorized
@@ -104,18 +129,26 @@ def add_client(current_user):
     if current_user.role != 'admin':
         return jsonify({'message': 'Invalid access'})
 
-    if not request.get_json():
-        abort(400, description="This is not a valid JSON")
-    required_fields = ['firstname', 'middlename', 'lastname',
-                       'username', 'hashed_password',
-                       'email', 'phone']
     data = request.get_json()
+    if not data:
+        abort(400, description="This is not a valid JSON")
+
+    required_fields = ['firstname', 'middlename', 'lastname',
+                       'username', 'password',
+                       'email', 'phone']
+
     for field in required_fields:
         if field not in data:
             abort(400, description=f"{field} not found")
+
+    data['password'] = bcrypt.hashpw(
+            base64.b64encode(hashlib.sha256(data.get('password')).digest()),
+            bcrypt.gensalt()
+            )
+
     instance = Client(**data)
     instance.save()
-    return make_response(jsonify(instance.to_dict()), 201)
+    return jsonify(instance.to_dict()), 201
 
 
 @token_authorized
@@ -133,12 +166,24 @@ def update_client(current_user, client_id):
     client = storage.get(Client, client_id)
     if not client:
         abort(400, description="Client not found")
-    data = request.get_json()
+
+    # restiction on user clients to access other client accounts
+    if current_user.role == 'client' and current_user.id != client.id:
+        return jsonify({'message': 'Unauthorized access'}), 403
+
     for key, value in data.items():
         if key not in ignored_fields:
+            if key == 'password':
+                # hash the updated password
+                value = bcrypt.hashpw(
+                        base64.b64encode(hashlib.sha256(value).digest()),
+                        bcrypt.gensalt()
+                        )
             setattr(client, key, value)
+    setattr(client, 'updated_at', datetime.utcnow()) # update updated_at timestamp
+
     storage.save()
-    return make_response(jsonify(client.to_dict()), 200)
+    return jsonify(client.to_dict()), 200
 
 
 @token_required
@@ -146,7 +191,6 @@ def update_client(current_user, client_id):
                  methods=['DELETE'], strict_slashes=False)
 def delete_client(current_user, client_id):
     """Deletes a client"""
-    roles = ['admin', 'client']
     if current_user.role not in roles:
         return jsonify({'message': 'Invalid access'}), 401
 
@@ -154,7 +198,8 @@ def delete_client(current_user, client_id):
     if not client:
         abort(404, description="No client found")
 
-    if current_user.role is 'client' and current_user.id != client.id:
+    # restiction on user clients to access other client accounts
+    if current_user.role == 'client' and current_user.id != client.id:
         return jsonify({'message': 'Unauthorized action'}), 403 
 
     storage.delete(client)

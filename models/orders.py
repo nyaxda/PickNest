@@ -12,11 +12,10 @@ class Orders(BaseModel):
     client_id = Column(Integer, ForeignKey('client.id'), nullable=False)
     shipping_address_id = Column(Integer,
                                  ForeignKey('address.id'), nullable=False)
-    status = Column(Enum('Pending',
-                         'Shipped', 'Delivered', 'Cancelled'), nullable=False)
+    status = Column(Enum('Pending', 'Shipped', 'Delivered', 'Cancelled'), nullable=False)
 
-    # Relatioship to Client, Address, OrderItems, and Payments
+    # Relationship to Client, Address, OrderItems, and Payments
     client = relationship("Client", back_populates="orders")
     shipping_address = relationship("Address", back_populates="orders")
-    order_items = relationship("OrderItems", back_populates="orders")
+    order_items = relationship("OrderItems", back_populates="order")  # Note: back_populates="order"
     payment = relationship("Payments", back_populates="order")
