@@ -1,7 +1,7 @@
 """wrapper function for token authentication
 """
 #!/usr/bin/env python3
-
+from functools import wraps
 
 def token_required(fn):
     """wrapper fn to secure routes

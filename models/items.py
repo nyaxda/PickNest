@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Items Module"""
+"""Items moddel module"""
 
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
@@ -21,7 +21,7 @@ class Items(BaseModel):
 
     # Relationship to Company and OrderItems
     company = relationship("Company", back_populates="items")
-    order_items = relationship("OrderItems", back_populates="items")
+    order_items = relationship("OrderItems", back_populates="item")  # Note: back_populates="item"
 
     def update_stock(self, quantity_ordered):
         """Updates the stock when an order is placed"""
@@ -30,9 +30,9 @@ class Items(BaseModel):
         self.stockamount -= quantity_ordered
         storage.save()
 
-    def restock(self, quanity_stocked):
+    def restock(self, quantity_stocked):
         """Increases stock amount when an item is ordered"""
-        self.stockamount += quanity_stocked
+        self.stockamount += quantity_stocked
         storage.save()
 
     def check_reorder(self):

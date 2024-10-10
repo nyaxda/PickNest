@@ -5,9 +5,18 @@ from api.views import app_views
 from models import storage
 from models.client import Client
 from flask import jsonify, abort, request, make_response
+from datetime import datetime
+import uuid
+import jwt
+from .token_auth import token_required
+from functools import wraps
+import bcrypt
+import json
+import hashlib
+import base64
 
 
-@app.route('clients/sign_up', methods=['POST'], strict_slashes=False)
+@app_views.route('clients/sign_up', methods=['POST'], strict_slashes=False)
 def sign_up() -> json:
     """signing up clients to have accounts"""
     data = request.get_json()
@@ -64,7 +73,7 @@ def login():
         }, app.config['SECRET_KEY'], algorithm='HS256')
 
     # make response header
-    res = make_response(jsonify({'message': f'{role.capitalize()} logged in successfully',)})
+    res = make_response(jsonify({'message': f'Client logged in successfully'}))
     res.headers['access_token'] = token.decode('utf-8') if isinstance(token, bytes) else token
     return res
 
@@ -94,7 +103,7 @@ def get_client(current_user, client_id):
     return jsonify(client.to_dict())
 
 
-@token_authorized
+@token_required
 @app_views.route('/clients',
                  methods=['POST'], strict_slashes=False)
 def add_client(current_user):
@@ -116,7 +125,7 @@ def add_client(current_user):
     return make_response(jsonify(instance.to_dict()), 201)
 
 
-@token_authorized
+@token_required
 @app_views.route('/clients/<client_id>',
                  methods=['PUT'], strict_slashes=False)
 def update_client(client_id):
