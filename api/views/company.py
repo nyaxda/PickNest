@@ -25,7 +25,17 @@ def company_sign_up() -> json:
         return jsonify({'message': 'Input not Found'}), 404
     
     if data.get('role') != 'company':
-        return make_response(jsonify({'message': 'Invalid role'}), 401) 
+        return make_response(jsonify({'message': 'Invalid role'}), 401)
+
+    required_fields = ['name', 'username', 'password',
+                       'email', 'phone_number',
+                       'address1', 'address2', 'city',
+                       'state', 'zip', 'country'
+                      ]
+
+    for field in required_fields:
+        if field not in data:
+            return jsonify({'Error': f"{field} not found"}), 400
 
     hashed = bcrypt.hashpw(
             base64.b64encode(hashlib.sha256(data.get('password')).digest()),
@@ -34,10 +44,17 @@ def company_sign_up() -> json:
 
     company = Company(
             public_id=str(uuid.uuid4()),
-            email=data.get('email'),
+            name=data.get('name'),
+            username=data.get('username'),
             hashed_password=hashed,
-            full_names=data.get('full_names'),
-            phone=data.get('phone'),
+            email=data.get('email'),
+            address1=data.get('address1'),
+            address2=data.get('address2'),
+            phone_number=data.get('phone_number'),
+            city=data.get('city'),
+            state=data.get('state'),
+            zip=data.get('zip'),
+            country=data.get('country'),
             role='company'
             )
 
@@ -51,8 +68,8 @@ def company_login():
     """Login route for companies"""
     data = request.get_json()
 
-    if not data or not data.get('username') or not data.get('password') or not data.get('role'):
-        return make_response(jsonify({'message': 'Invalid input'}), 400)
+    if not data or not data.get('username') or not data.get('password'):
+        return make_response(jsonify({'message': 'Invalid credentials'}), 400)
     role = data.get('role')
     if role != 'company':
         return make_response(jsonify({'message': 'Invalid role'}), 401)
@@ -64,17 +81,20 @@ def company_login():
 
     # Check password match
     if not bcrypt.checkpw(data['password'].encode('utf-8'), company.hashed_password.encode('utf-8')):
-        return jsonify({'message': 'Invalid username or uassword'}), 401
+        return jsonify({'message': 'Invalid credentials'}), 401
 
     # Generate token
     token = jwt.encode({
         'public_id': company.public_id,
         'role': role,  # Include role in the token for further route protection
-        'exp': datetime.utcnow() + timedelta(minutes=10)
+        'exp': datetime.utcnow() + timedelta(minutes=120)
         }, app.config['SECRET_KEY'], algorithm='HS256')
 
     # make response header
-    res = make_response(jsonify({'message': f'{role.capitalize()} logged in successfully'}))
+    res = make_response(jsonify({
+        'message': f'{role.capitalize()} logged in successfully',
+        'token': token.decode('utf-8') if isinstance(token, bytes) else token
+    }))
     res.headers['access_token'] = token.decode('utf-8') if isinstance(token, bytes) else token
     return res
 
@@ -97,12 +117,16 @@ def get_companies(current_user):
                  methods=['GET'], strict_slashes=False)
 def get_company(current_user, company_id):
     """Retrieves a company"""
-    if current_user.role != 'admin':
+    if current_user.role != roles:
         return jsonify({'message': 'Invalid Access'}), 401
 
     company = storage.get(Company, company_id)
     if not company:
-        abort(400, description="Company not found")
+        return jsonify({'message': 'company not found'}), 400
+
+    if current_user.role == 'company' and current_user.public_id != company.public_id:
+        return jsonify({'message': 'Unauthorized action'}), 403
+
     return jsonify(company.to_dict())
 
 
@@ -112,17 +136,23 @@ def get_company(current_user, company_id):
 def add_company(current_user):
     """Creates a company"""
     if current_user.role != 'admin':
-        return jsonify({'message': 'Invalid Access'}), 401
+        return jsonify({'message': 'Invalid Access'}), 403
 
     if not request.get_json():
         abort(400, description="This is not a valid JSON")
     required_fields = ['name', 'email', 'username',
-                       'hashed_password', 'phone_number',
+                       'password', 'phone_number',
                        'address1', 'city', 'state', 'zip', 'country']
     data = request.get_json()
     for field in required_fields:
         if field not in data:
-            abort(400, description=f"{field} not found")
+            return jsonify({'Error': f"{field} not found"}), 400
+    
+    data['hashed_password'] = bcrypt.hashpw(
+            base64.b64encode(hashlib.sha256(data.get('password')).digest()),
+            bcrypt.gensalt()
+            )
+
     instance = Company(**data)
     instance.save()
     return make_response(jsonify(instance.to_dict()), 201)

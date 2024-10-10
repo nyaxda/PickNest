@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""wrapper function for token authentication
+"""
+#!/usr/bin/env python3
 """Wrapper function for token authentication"""
 from functools import wraps
 from flask import request, jsonify, make_response, current_app as app
@@ -26,8 +29,14 @@ def token_required(fn):
         try:
             # decode token
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            # obtain user role
+            role = decoded_token.get('role')
+            roles = ['client', 'company', 'admin']
+            if not role and role not in roles:
+                jsonify({'Error': 'Invalid role'}), 404
+
             # get current user in database based on the public_id
-            current_user = Client.query.filter_by(public_id=decoded_token.get('public_id')).first()
+            current_user = role.capitalize().query.filter_by(public_id=decoded_token.get('public_id')).first()
 
             if not current_user:  # token is valid but user doesn't exist
                 return jsonify({'Error': 'User not found'}), 404

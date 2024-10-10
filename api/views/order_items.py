@@ -6,12 +6,18 @@ from models import storage
 from models.order_items import OrderItems
 from models.items import Items
 from flask import jsonify, abort, request, make_response
+from .token_auth import token_required
+roles = ['admin', 'client']
 
 
+@token_required
 @app_views.route('/orders/<order_id>/order_items',
                  methods=['GET'], strict_slashes=False)
-def get_order_items(order_id):
+def get_order_items(current_user, order_id):
     """Retrieve all order items for a specific order"""
+    if current_user not in roles:
+        return jsonify({'Error': 'Invalid role'})
+
     all_order_items = storage.all(OrderItems).values()
     list_items = [item.to_dict() for
                   item in all_order_items if
@@ -19,9 +25,10 @@ def get_order_items(order_id):
     return jsonify(list_items)
 
 
+@token_required
 @app_views.route('/orders/<order_id>/order_items/<item_id>',
                  methods=['GET'], strict_slashes=False)
-def get_order_item(order_id, item_id):
+def get_order_item(current_user, order_id, item_id):
     """Retrieve a specific order item"""
     order_item = storage.get(OrderItems, item_id)
     if not order_item or order_item.order_id != order_id:
@@ -29,9 +36,10 @@ def get_order_item(order_id, item_id):
     return jsonify(order_item.to_dict())
 
 
+@token_required
 @app_views.route('/orders/<order_id>/order_items',
                  methods=['POST'], strict_slashes=False)
-def add_order_item(order_id):
+def add_order_item(current_user, order_id):
     """Create a new order item"""
     if not request.get_json():
         abort(400, description="Not a valid JSON")
@@ -55,9 +63,10 @@ def add_order_item(order_id):
     return make_response(jsonify(instance.to_dict()), 201)
 
 
+@token_required
 @app_views.route('/orders/<order_id>/order_items/<item_id>',
                  methods=['PUT'], strict_slashes=False)
-def update_order_item(order_id, item_id):
+def update_order_item(current_user, order_id, item_id):
     """Update an existing order item"""
     if not request.get_json():
         abort(400, description="Not a valid JSON")
@@ -92,9 +101,10 @@ def update_order_item(order_id, item_id):
     return make_response(jsonify(order_item.to_dict()), 200)
 
 
+@token_required
 @app_views.route('/orders/<order_id>/order_items/<item_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_order_item(order_id, item_id):
+def delete_order_item(current_user, order_id, item_id):
     """Delete an order item"""
     order_item = storage.get(OrderItems, item_id)
     if not order_item or order_item.order_id != order_id:
