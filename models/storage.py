@@ -24,7 +24,7 @@ class Storage:
     def all(self, cls=None):
         """Return all objects in storage"""
         if cls:
-            return self.__session.query(cls).all
+            return self.__session.query(cls).all()
         else:
             classes = [Address, Client,
                        Company, Items,
