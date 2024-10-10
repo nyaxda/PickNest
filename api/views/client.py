@@ -14,6 +14,7 @@ import bcrypt
 import json
 import hashlib
 import base64
+roles = ['admin', 'client']
 
 
 @app_views.route('clients/sign_up', methods=['POST'], strict_slashes=False)
@@ -158,7 +159,7 @@ def add_client(current_user):
                  methods=['PUT'], strict_slashes=False)
 def update_client(current_user, client_id):
     """Updates a client"""
-    if current_user.role != 'admin':
+    if current_user.role != roles:
         return jsonify({'message': 'Unauthorized action'}), 403
 
     if not request.get_json():
@@ -201,7 +202,7 @@ def delete_client(current_user, client_id):
         abort(404, description="No client found")
 
     # restiction on user clients to access other client accounts
-    if current_user.role == 'client' and current_user.id != client.id:
+    if current_user.role == 'client' and current_user.public_id != client.public_id:
         return jsonify({'message': 'Unauthorized action'}), 403 
 
     storage.delete(client)
