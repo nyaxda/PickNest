@@ -5,7 +5,7 @@ from api.views import app_views
 from models import storage
 from models.client import Client
 from flask import jsonify, abort, request, make_response
-from datetime import datetime
+from datetime import datetime, timedelta
 import uuid
 import jwt
 from .token_auth import token_required
@@ -14,10 +14,9 @@ import bcrypt
 import json
 import hashlib
 import base64
-from .token_auth import token_required
 
 
-@app.route('clients/sign_up', methods=['POST'], strict_slashes=False)
+@app_views.route('clients/sign_up', methods=['POST'], strict_slashes=False)
 def sign_up() -> json:
     """signing up clients to have accounts"""
     data = request.get_json()
@@ -61,7 +60,7 @@ def login():
     data = request.get_json()
 
     if not data or not data.get('username') or not data.get('password'):
-        return make_response(jsonify({'message': 'Invalid username or password'}), 400)
+        return make_response(jsonify({'message': 'Invalid credentials'}), 400)
 
     role = data.get('role')
     if role != 'client':
@@ -84,7 +83,10 @@ def login():
         }, app.config['SECRET_KEY'], algorithm='HS256')
 
     # make response header
-    res = make_response(jsonify({'message': f'{role.capitalize()} logged in successfully',)})
+    res = make_response(jsonify({
+        'message': f'{role.capitalize()} logged in successfully',
+        'token': token.decode('utf-8') if isinstance(token, bytes) else token  # Include token in response body
+    }))
     res.headers['access_token'] = token.decode('utf-8') if isinstance(token, bytes) else token
     return res
 
@@ -160,15 +162,15 @@ def update_client(current_user, client_id):
         return jsonify({'message': 'Unauthorized action'}), 403
 
     if not request.get_json():
-        abort(404, description="Not a valid JSON")
-    ignored_fields = ['id', 'created_at', 'updated_at']
+        abort(400, description="Not a valid JSON")
+    ignored_fields = ['id', 'created_at']
 
     client = storage.get(Client, client_id)
     if not client:
         abort(400, description="Client not found")
 
     # restiction on user clients to access other client accounts
-    if current_user.role == 'client' and current_user.id != client.id:
+    if current_user.role == 'client' and current_user.public_id != client.public_id:
         return jsonify({'message': 'Unauthorized access'}), 403
 
     for key, value in data.items():
