@@ -6,13 +6,13 @@ from models import storage
 from models.company import Company
 from flask import jsonify, abort, request, make_response
 from .token_auth import token_required
-import bcrypt
-import hashlib
-import base64
 import jwt
 from datetime import datetime, timedelta
 import json
+import uuid
+from .hash_password import hash_password
 
+roles = ['admin', 'company']
 
 
 @app_views.route('companies/sign_up', methods=['POST'], strict_slashes=False)
@@ -20,11 +20,10 @@ def company_sign_up() -> json:
     """signing up clients to have accounts"""
     data = request.get_json()
 
-    if not data or not data.get('username') or not data.get('password') or\
-            data.get('role'):
+    if not data or not data.get('username') or not data.get('password'):
         return jsonify({'message': 'Input not Found'}), 404
     
-    if data.get('role') != 'company':
+    if not data.get('role') or data.get('role') != 'company':
         return make_response(jsonify({'message': 'Invalid role'}), 401)
 
     required_fields = ['name', 'username', 'password',
@@ -35,12 +34,9 @@ def company_sign_up() -> json:
 
     for field in required_fields:
         if field not in data:
-            return jsonify({'Error': f"{field} not found"}), 400
+            return jsonify({'message': f"{field} not found"}), 400
 
-    hashed = bcrypt.hashpw(
-            base64.b64encode(hashlib.sha256(data.get('password')).digest()),
-            bcrypt.gensalt()
-            )
+    hashed = hash_password(data.get('password'))
 
     company = Company(
             public_id=str(uuid.uuid4()),
@@ -117,7 +113,7 @@ def get_companies(current_user):
                  methods=['GET'], strict_slashes=False)
 def get_company(current_user, company_id):
     """Retrieves a company"""
-    if current_user.role != roles:
+    if current_user.role not in roles:
         return jsonify({'message': 'Invalid Access'}), 401
 
     company = storage.get(Company, company_id)
@@ -139,23 +135,21 @@ def add_company(current_user):
         return jsonify({'message': 'Invalid Access'}), 403
 
     if not request.get_json():
-        abort(400, description="This is not a valid JSON")
+        return jsonify({'message': 'Invalid Access'}), 400
     required_fields = ['name', 'email', 'username',
                        'password', 'phone_number',
                        'address1', 'city', 'state', 'zip', 'country']
     data = request.get_json()
     for field in required_fields:
         if field not in data:
-            return jsonify({'Error': f"{field} not found"}), 400
+            return jsonify({'message': f"{field} not found"}), 400
     
-    data['hashed_password'] = bcrypt.hashpw(
-            base64.b64encode(hashlib.sha256(data.get('password')).digest()),
-            bcrypt.gensalt()
-            )
+    data['hashed_password'] = hash_password(data.get('password'))
+    del data['password']   # delete to prevent collision in field during obj instantiation
 
     instance = Company(**data)
     instance.save()
-    return make_response(jsonify(instance.to_dict()), 201)
+    return jsonify(instance.to_dict()), 201
 
 
 @token_required
@@ -163,39 +157,48 @@ def add_company(current_user):
                  methods=['PUT'], strict_slashes=False)
 def update_company(current_user, company_id):
     """Updates a company"""
-    if current_user.role != 'admin':
+    if current_user.role not in roles:
         return jsonify({'message': 'Invalid Access'}), 401
 
     if not request.get_json():
-        abort(400, description="Not a JSON")
-    ignored_fields = ['id', 'created_at', 'updated_at']
+        return jsonify({'message': 'Invalid JSON'}), 400
+    ignored_fields = ['id', 'created_at']
 
     company = storage.get(Company, company_id)
     if not company:
-        abort(400, description="Company not found")
+        return jsonify({'message': 'Company not found'}), 400
+
     data = request.get_json()
+
     for key, value in data.items():
         if key not in ignored_fields:
+            if key == 'password':  # hash the password
+                value = bcrypt.hashpw(
+                    base64.b64encode(hashlib.sha256(value).digest()),
+                    bcrypt.gensalt())
+                setattr(company, 'hashed_password', value)
+                continue
+
             setattr(company, key, value)
+    setattr(company, 'updated_at', datetime.utcnow())  # update modification timestamp
     storage.save()
-    return make_response(jsonify(company.to_dict()), 200)
+    return jsonify(company.to_dict()), 200
 
 
 @app_views.route('/companies/<company_id>',
                  methods=['DELETE'], strict_slashes=False)
 def delete_company(current_user, company_id):
     """Deletes a company"""
-    roles = ['admin', 'company']
     if current_user.role not in roles:
         return jsonify({'message': 'Invalid Access'}), 401
 
     company = storage.get(Company, company_id)
     if not company:
-        abort(400, description="No company found")
+        return jsonify({'message': 'Company not found'}), 400
 
     # check if the a company is deleting it's account associated
     # with its id
-    if current_user.role == 'company' and current_user.id != company.id:
+    if current_user.role == 'company' and current_user.public_id != company.public_id:
         return jsonify({'message': 'Unauthorized action'}), 403
 
     storage.delete(company)
