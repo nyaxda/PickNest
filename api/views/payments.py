@@ -7,7 +7,7 @@ from models.payments import Payments
 from models.orders import Orders
 from models.client import Client
 from flask import jsonify, abort, request, make_response
-from token_auth import token_required
+from .token_auth import token_required
 roles = ['client', 'admin']
 
 

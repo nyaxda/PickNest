@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""wrapper function for token authentication
-"""
-#!/usr/bin/env python3
 """Wrapper function for token authentication"""
 from functools import wraps
 from flask import request, jsonify, make_response, current_app as app

@@ -7,7 +7,6 @@ class Payments(BaseModel):
     """payment class implementation"""
     __tablename__ = 'payments'
 
-    payment_id = Column(Integer, primary_key=True)
     order_id = Column(Integer, ForeignKey('orders.id'), nullable=False)
     payment_date = Column(String(255), nullable=False)
     amount_paid = Column(Integer, nullable=False)

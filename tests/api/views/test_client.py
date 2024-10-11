@@ -89,32 +89,38 @@ class TestClient(unittest.TestCase):
     #     # Assert that an access token is included in the response headers
     #     self.assertIn('access_token', response.headers)
 
-    @patch('api.views.client.Client')  # Mock the Client model
-    @patch('api.views.client.storage.all')  # Mock the storage.all method
-    @patch('api.views.client.token_required', lambda f: f)  # Mock the token_required decorator to pass through
-    def test_get_clients(self, mock_storage_all, mock_client):
-        """Test get_clients route"""
+    @patch('api.views.client.storage.get')  # Mock the storage.get method
+    @patch('api.views.client.token_required')  # Bypass token_required decorator
+    def test_get_client(self, mock_token_required, mock_storage_get):
+        """Test get_client route"""
 
         # Simulate a current_user with an admin role
         mock_current_user = MagicMock()
         mock_current_user.role = 'admin'
 
-        # Mock the result of storage.all(Client) to return a list of mock clients
-        mock_client1 = MagicMock()
-        mock_client1.to_dict.return_value = {
+        # Mock the token_required decorator to return mock_current_user
+        mock_token_required.side_effect = lambda f: lambda *args, **kwargs: f(mock_current_user, *args, **kwargs)
+    
+        # Mock a client object returned from storage.get
+        mock_client_instance = MagicMock()
+        mock_client_instance.to_dict.return_value = {
             'id': '1', 'username': 'user1', 'role': 'client'
         }
-        mock_client2 = MagicMock()
-        mock_client2.to_dict.return_value = {
-            'id': '2', 'username': 'user2', 'role': 'client'
-        }
-        mock_storage_all.return_value = [mock_client1, mock_client2]
+        mock_storage_get.return_value = mock_client_instance  # Mock storage.get return value
 
-        # Perform a GET request to the /api/clients route
-        response = self.client.get('/api/clients', headers={'access_token': 'valid_token'})
+        # Perform a GET request to the /api/clients/1 route
+        print("Sending GET request to /api/clients/1")
+        response = self.client.get('/api/clients/1', headers={'access_token': 'valid_token'})
         
         # Check the status code and response data
-        self.assertEqual(response.status_code)
+        print("Response status code:", response.status_code)
+        print("Response data:", response.data)
+        
+        self.assertEqual(response.status_code, 200)  # Assert that status code is 200 OK
+        response_data = json.loads(response.data)  # Load the response JSON data
+        print("Extracted response data:", response_data)
+        self.assertEqual(response_data['username'], 'user1')  # Check the client's username
+        self.assertEqual(response_data['id'], '1')  # Check the client's ID
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 class Address(BaseModel):
     """Address Model"""
     __tablename__ = 'address'
-    address_id = Column(Integer, primary_key=True)
     client_id = Column(Integer, ForeignKey('client.id'), nullable=False)
     address_line1 = Column(String(255), nullable=False)
     address_line2 = Column(String(255), nullable=True)
