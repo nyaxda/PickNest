@@ -9,12 +9,12 @@ from .basemodel import BaseModel
 class Company(BaseModel):
     """Company Model"""
     __tablename__ = 'company'
-    name = Column(String(255), nullable=False)
-    public_id = Column(String(255), nullable=False)
-    username = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False, unique=True)
+    public_id = Column(String(255), nullable=False, unique=True)
+    username = Column(String(255), nullable=False, unique=True)
     hashed_password = Column(String(255), nullable=False)
-    email = Column(String(255), nullable=False)
-    phone_number = Column(String(30), nullable=False)
+    email = Column(String(255), nullable=False, unique=True)
+    phone_number = Column(String(30), nullable=False, unique=True)
     address1 = Column(String(255), nullable=False)
     address2 = Column(String(255), nullable=True)
     city = Column(String(255), nullable=False)

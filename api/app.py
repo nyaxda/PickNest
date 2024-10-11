@@ -9,7 +9,8 @@ from api.views import app_views
 from models import storage
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'nyakundi'
+app.config['DEBUG'] = True
 # Registering app_views that has the routes
 app.register_blueprint(app_views)
 

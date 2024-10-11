@@ -5,6 +5,7 @@ from api.views import app_views
 from models import storage
 from models.company import Company
 from flask import jsonify, abort, request, make_response
+from sqlalchemy.exc import IntegrityError
 from .token_auth import token_required
 import jwt
 from datetime import datetime, timedelta
@@ -53,9 +54,13 @@ def company_sign_up() -> json:
             country=data.get('country'),
             role='company'
             )
-
-    storage.new(company)
-    storage.save()
+    # Try saving to the database and handle IntegrityError if any unique field is violated
+    try:
+        storage.new(company)
+        storage.save()
+    except IntegrityError:
+        storage.rollback()  # Rollback in case of failure
+        return jsonify({'message': 'A company with that username, email, or phone number already exists.'}), 409
 
     return jsonify({'message': 'Client registered successfully'}), 201
 
