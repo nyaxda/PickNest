@@ -9,14 +9,14 @@ from .basemodel import BaseModel
 class Client(BaseModel):
     """Client Model"""
     __tablename__ = 'client'
-    public_id = Column(String(255), nullable=False)
+    public_id = Column(String(255), nullable=False, unique=True)
     firstname = Column(String(255), nullable=False)
     middlename = Column(String(255), nullable=True)
     lastname = Column(String(255), nullable=False)
-    username = Column(String(255), nullable=False)
+    username = Column(String(255), nullable=False, unique=True)
     hashedpassword = Column(String(255), nullable=False)
-    email = Column(String(255), nullable=False)
-    phone = Column(String(30), nullable=False)
+    email = Column(String(255), nullable=False, unique=True)
+    phone = Column(String(30), nullable=False, unique=True)
     role = Column(String(20), nullable=False)
 
     # Relationship to Address and Orders
