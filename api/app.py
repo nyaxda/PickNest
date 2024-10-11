@@ -1,11 +1,15 @@
 #!/usr/bin/python3
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+
 from flask import Flask
 from api.views import app_views
 from models import storage
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'nyakundi'
+
 # Registering app_views that has the routes
 app.register_blueprint(app_views)
 

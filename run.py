@@ -21,6 +21,8 @@ Session = sessionmaker(bind=engine)
 
 session = Session()
 
+Base.metadata.drop_all(engine)
+
 Base.metadata.create_all(engine)
 
 print("Created successfully")
