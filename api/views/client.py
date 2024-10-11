@@ -5,6 +5,7 @@ from api.views import app_views
 from models import storage
 from models.client import Client
 from flask import jsonify, abort, request, make_response, current_app
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 import uuid
 import jwt
@@ -12,6 +13,7 @@ import bcrypt
 import hashlib
 import base64
 from .token_auth import token_required
+from .hash_password import hash_password, verify_password
 
 
 @app_views.route('/clients/sign_up', methods=['POST'], strict_slashes=False)
@@ -26,16 +28,13 @@ def sign_up():
             return jsonify({'message': f'{field} is required'}), 400
 
     # Hash the password using bcrypt
-    hashed = bcrypt.hashpw(
-        base64.b64encode(hashlib.sha256(data.get('password').encode()).digest()),
-        bcrypt.gensalt()
-    )
+    hashed = hash_password(data.get('password'))
 
     # Create new client instance
     client = Client(
         public_id=str(uuid.uuid4()),
         email=data.get('email'),
-        hashedpassword=hashed.decode('utf-8'),
+        hashedpassword=hashed.encode(),
         firstname=data.get('firstname'),
         middlename=data.get('middlename', ''),  # Optional field
         lastname=data.get('lastname'),
@@ -43,10 +42,23 @@ def sign_up():
         phone=data.get('phone'),
         role=data.get('role')
     )
+    try:
+        # Save the new client to storage
+        storage.new(client)
+        storage.save()
 
-    # Save the new client to storage
-    storage.new(client)
-    storage.save()
+    except IntegrityError as e:
+        storage.rollback() # Rollback session in case of an error
+
+        # Handle unique constraint violations for username, email, or phone
+        if "username" in str(e.orig):
+            return jsonify({'message': 'Username already exists'}), 409
+        elif "email" in str(e.orig):
+            return jsonify({'message': 'Email already exists'}), 409
+        elif "phone" in str(e.orig):
+            return jsonify({'message': 'Phone number already exists'}), 409
+        else:
+            return jsonify({'message': 'An error occurred during registration'}), 500
 
     return jsonify({'message': 'Client registered successfully'}), 201
 
@@ -69,7 +81,7 @@ def login():
         return jsonify({'message': 'Client not found!'}), 404
 
     # Check if the password matches
-    if not bcrypt.checkpw(data['password'].encode('utf-8'), user.hashedpassword.encode('utf-8')):
+    if not verify_password(data.get('password'), user.hashedpassword):
         return jsonify({'message': 'Incorrect Password'}), 401
 
     # Generate token
