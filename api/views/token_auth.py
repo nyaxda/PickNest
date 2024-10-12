@@ -15,6 +15,7 @@ def token_required(fn):
     """
     @wraps(fn)
     def wrapper(*args, **kwargs):
+        print("wrapper")
         token = request.headers.get('access-token')
         if not token:
             return make_response(
@@ -30,7 +31,7 @@ def token_required(fn):
             role = decoded_token.get('role')
             roles = ['client', 'company', 'admin']
             if not role and role not in roles:
-                jsonify({'Error': 'Invalid role'}), 404
+                jsonify({'Error': 'Invalid role'}), 403
 
             # get current user in database based on the public_id
             current_user = role.capitalize().query.filter_by(public_id=decoded_token.get('public_id')).first()
@@ -45,5 +46,6 @@ def token_required(fn):
             return jsonify({'Message': 'Error Decoding Token'}), 401
 
         # If everything is fine, pass current_user to the wrapped function
+        
         return fn(current_user, *args, **kwargs)
     return wrapper
