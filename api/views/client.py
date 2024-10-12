@@ -9,11 +9,10 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 import uuid
 import jwt
-import bcrypt
-import hashlib
-import base64
 from .token_auth import token_required
 from .hash_password import hash_password, verify_password
+
+roles = ['admin', 'client']
 
 
 @app_views.route('/clients/sign_up', methods=['POST'], strict_slashes=False)
@@ -22,10 +21,12 @@ def sign_up():
     data = request.get_json()
 
     # Check for required fields in the request
-    required_fields = ['username', 'password', 'firstname', 'lastname', 'email', 'phone', 'role']
+    required_fields = ['username', 'password', 'firstname', 'lastname', 'email', 'phone']
     for field in required_fields:
         if field not in data:
             return jsonify({'message': f'{field} is required'}), 400
+        if data.get('role') and data.get('role') != 'client':
+            return jsonify({'message': 'Invalid role'}), 401
 
     # Hash the password using bcrypt
     hashed = hash_password(data.get('password'))
@@ -40,7 +41,7 @@ def sign_up():
         lastname=data.get('lastname'),
         username=data.get('username'),
         phone=data.get('phone'),
-        role=data.get('role')
+        role='client'
     )
     try:
         # Save the new client to storage
@@ -91,9 +92,8 @@ def login():
         'exp': datetime.utcnow() + timedelta(minutes=10)
     }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
-    res = make_response(jsonify({'message': 'Client logged in successfully'}))
-    res.headers['access_token'] = token if isinstance(token, str) else token.decode('utf-8')
-    return res
+    return jsonify({'message': 'Client logged in successfully',
+                                 'token': token if isinstance(token, str) else token.decode('utf-8')})
 
 
 @token_required
@@ -101,7 +101,7 @@ def login():
 def get_clients(current_user):
     """Retrieve list of all clients"""
     if current_user.role != 'admin':
-        return jsonify({'message': 'Unauthorized action'}), 403
+        return jsonify({'message': 'Unauthorized access'}), 403
 
     all_clients = storage.all(Client).values()
     list_clients = [client.to_dict() for client in all_clients]
@@ -112,12 +112,15 @@ def get_clients(current_user):
 @app_views.route('/clients/<client_id>', methods=['GET'], strict_slashes=False)
 def get_client(current_user, client_id):
     """Retrieve a client by ID"""
-    if current_user.role != 'admin':
-        return jsonify({'message': 'Invalid access'}), 403
+    if current_user.role not in roles:
+        return jsonify({'message': 'Unauthorized access'}), 403
 
     client = storage.get(Client, client_id)
     if not client:
-        abort(404, description="Client not found")
+        return jsonify({'message': 'Client not found'}), 404
+    
+    if current_user.role == 'client' and current_user.public_id != client.public_id:
+        return jsonify({'message': 'Unauthorized access'}), 403
 
     return jsonify(client.to_dict())
 
