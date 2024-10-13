@@ -11,7 +11,8 @@ import jwt
 from datetime import datetime, timedelta
 import json
 import uuid
-from .hash_password import hash_password
+from .hash_password import hash_password, verify_password
+import bcrypt
 
 roles = ['admin', 'company']
 
@@ -81,7 +82,7 @@ def company_login():
         return jsonify({'message': f'{role.capitalize()} not found!'}), 404
 
     # Check password match
-    if not bcrypt.checkpw(data['password'].encode('utf-8'), company.hashed_password.encode('utf-8')):
+    if not verify_password(data['password'], company.hashed_password):
         return jsonify({'message': 'Invalid credentials'}), 401
 
     # Generate token
