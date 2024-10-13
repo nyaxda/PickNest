@@ -135,18 +135,37 @@ def add_client(current_user):
     if not request.get_json():
         abort(400, description="Not a valid JSON")
 
-    required_fields = ['firstname', 'lastname', 'username', 'hashedpassword', 'email', 'phone', 'role']
+    required_fields = ['firstname', 'lastname', 'username', 'password', 'email', 'phone']
     data = request.get_json()
-
     for field in required_fields:
         if field not in data:
             abort(400, description=f"{field} not found")
 
-    instance = Client(**data)
-    storage.new(instance)
-    storage.save()
+    data["hashedpassword"] = hash_password(data.get('password'))
+    del data["password"]
 
-    return make_response(jsonify(instance.to_dict()), 201)
+    data["role"] = "client"
+    data["public_id"] = str(uuid.uuid4())
+    instance = Client(**data)
+    try:
+        # Save the new client to storage
+        storage.new(instance)
+        storage.save()
+
+    except IntegrityError as e:
+        storage.rollback() # Rollback session in case of an error
+
+        # Handle unique constraint violations for username, email, or phone
+        if "username" in str(e.orig):
+            return jsonify({'message': 'Username already exists'}), 409
+        elif "email" in str(e.orig):
+            return jsonify({'message': 'Email already exists'}), 409
+        elif "phone" in str(e.orig):
+            return jsonify({'message': 'Phone number already exists'}), 409
+        else:
+            return jsonify({'message': f'An error occurred during registration: {e.orig}'}), 500
+
+    return jsonify({'message': 'User registered successfully'}), 201
 
 
 @app_views.route('/clients/<client_id>', methods=['PUT'], strict_slashes=False)
