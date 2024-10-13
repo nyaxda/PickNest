@@ -25,8 +25,6 @@ def company_sign_up():
     for field in required_fields:
         if field not in data:
             return jsonify({'message': f'{field} is required'}), 400
-    if data.get('role') and data.get('role') != 'company':
-        return jsonify({'message': 'Invalid role'}), 401
 
     # Hash the password
     hashed_password = hash_password(data.get('password'))

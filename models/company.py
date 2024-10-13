@@ -21,6 +21,7 @@ class Company(BaseModel):
     state = Column(String(255), nullable=False)
     zip = Column(String(20), nullable=False)
     country = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False)
 
     # Relationship to Items
     items = relationship("Items", back_populates="company")
