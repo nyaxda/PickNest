@@ -93,7 +93,7 @@ def login():
     }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
     return jsonify({'message': 'Client logged in successfully',
-                                 'token': token if isinstance(token, str) else token.decode('utf-8')})
+        'token': token if isinstance(token, str) else token.decode('utf-8')})
 
 
 @app_views.route('/clients', methods=['GET'], strict_slashes=False)
