@@ -56,9 +56,9 @@ class Storage:
         """Close storage"""
         self.__session.remove()
 
-    def get(self, cls, id):
+    def get(self, cls, public_id):
         """Get object by class and id"""
-        return self.__session.query(cls).get(id)
+        return self.__session.query(cls).filter_by(public_id=public_id).first()
 
     def rollback(self):
         """Rollback the session"""

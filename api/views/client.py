@@ -89,27 +89,27 @@ def login():
     token = jwt.encode({
         'public_id': user.public_id,
         'role': 'client',
-        'exp': datetime.utcnow() + timedelta(minutes=10)
+        'exp': datetime.utcnow() + timedelta(minutes=120)
     }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
     return jsonify({'message': 'Client logged in successfully',
                                  'token': token if isinstance(token, str) else token.decode('utf-8')})
 
 
-@token_required
 @app_views.route('/clients', methods=['GET'], strict_slashes=False)
+@token_required
 def get_clients(current_user):
     """Retrieve list of all clients"""
     if current_user.role != 'admin':
         return jsonify({'message': 'Unauthorized access'}), 403
 
-    all_clients = storage.all(Client).values()
+    all_clients = storage.all(Client)
     list_clients = [client.to_dict() for client in all_clients]
     return jsonify(list_clients)
 
 
-@token_required
 @app_views.route('/clients/<client_id>', methods=['GET'], strict_slashes=False)
+@token_required
 def get_client(current_user, client_id):
     """Retrieve a client by ID"""
     if current_user.role not in roles:
@@ -125,8 +125,8 @@ def get_client(current_user, client_id):
     return jsonify(client.to_dict())
 
 
-@token_required
 @app_views.route('/clients', methods=['POST'], strict_slashes=False)
+@token_required
 def add_client(current_user):
     """Create a new client"""
     if current_user.role != 'admin':
@@ -149,34 +149,52 @@ def add_client(current_user):
     return make_response(jsonify(instance.to_dict()), 201)
 
 
-@token_required
 @app_views.route('/clients/<client_id>', methods=['PUT'], strict_slashes=False)
+@token_required
 def update_client(current_user, client_id):
-    """Update an existing client"""
-    if not request.get_json():
-        abort(400, description="Not a valid JSON")
-
-    ignored_fields = ['id', 'created_at', 'updated_at', 'public_id']
-
-    client = storage.get(Client, client_id)
-    if not client:
-        abort(404, description="Client not found")
+    """Updates a client"""
+    # Check if the current user has the right role
+    if current_user.role not in roles:
+        return jsonify({'message': 'Unauthorized access'}), 403
 
     data = request.get_json()
+    if not data:
+        return jsonify({'message': 'Unauthorized access'}), 400
+
+    ignored_fields = ['id', 'created_at']
+
+    # Fetch the client from storage
+    client = storage.get(Client, client_id)
+    if not client:
+        return jsonify({'message': 'Client not found'}), 404
+
+    # Restrict access to only the client's own account if they are a client
+    if current_user.role == 'client' and current_user.id != client.id:
+        return jsonify({'message': 'Unauthorized access'}), 403
+
     for key, value in data.items():
         if key not in ignored_fields:
-            setattr(client, key, value)
+            if key == 'password':
+                # Hash the updated password
+                value = hash_password(value)
+                setattr(client, 'hashedpassword', value)
+            else:
+                setattr(client, key, value)
 
+    # Update the updated_at timestamp
+    setattr(client, 'updated_at', datetime.utcnow()) 
+
+    # Save changes to storage
     storage.save()
 
-    return make_response(jsonify(client.to_dict()), 200)
+    return jsonify(client.to_dict()), 200
 
 
-@token_required
 @app_views.route('/clients/<client_id>', methods=['DELETE'], strict_slashes=False)
+@token_required
 def delete_client(current_user, client_id):
     """Delete a client by ID"""
-    if current_user.role not in ['admin', 'client']:
+    if current_user.role not in roles:
         return jsonify({'message': 'Unauthorized action'}), 401
 
     client = storage.get(Client, client_id)
@@ -186,7 +204,8 @@ def delete_client(current_user, client_id):
     if current_user.role == 'client' and current_user.public_id != client.public_id:
         return jsonify({'message': 'Unauthorized action'}), 403
 
+    client_name = client.username
     storage.delete(client)
     storage.save()
 
-    return make_response(jsonify({}), 200)
+    return jsonify({'message': f'{client_name} removed'}), 200
