@@ -10,14 +10,15 @@ from models import storage
 class Items(BaseModel):
     """Items Model"""
     __tablename__ = 'items'
-    company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
+    public_id = Column(String(255), nullable=False, unique=True)
+    company_id = Column(String(255), ForeignKey('company.public_id'), nullable=False)
     name = Column(String(255), nullable=False)
     stockamount = Column(Integer, nullable=False)
     initial_stock = Column(Integer, nullable=False)
     reorder_level = Column(Integer, nullable=False)
     description = Column(String(255), nullable=False)
     category = Column(String(255), nullable=False)
-    SKU = Column(String(255), nullable=False)
+    SKU = Column(String(255), nullable=False, unique=True)
 
     # Relationship to Company and OrderItems
     company = relationship("Company", back_populates="items")
