@@ -4,19 +4,18 @@
 from api.views import app_views
 from models import storage
 from models.items import Items
-from flask import jsonify, abort, request
+from flask import jsonify, request
 from .token_auth import token_required
 from sqlalchemy.exc import IntegrityError
 import uuid
 
-
+roles = ['admin', 'company']
 
 @app_views.route('/companies/<company_id>/items',
                  methods=['GET'], strict_slashes=False)
 @token_required
 def get_company_items(current_user, company_id):
     """Retrieve all items from a specific company"""
-    roles = ['admin', 'company']
     if current_user.role not in roles:
         return jsonify({'Error': 'Invalid access'}), 403
 
@@ -45,13 +44,12 @@ def get_all_items(current_user):
 @token_required
 def get_item(current_user, item_id):
     """Retrieve a specific item"""
-    roles = ['admin', 'company']
     if current_user.role not in roles:
         return jsonify({'Error': 'Invalid access'}), 403
     
     item = storage.get(Items, item_id)
     if not item:
-        abort(404, description="Item not found")
+        return jsonify({'Error': 'Item not found'}), 404
 
     # restricts companies from accessing other companies' profiles
     if current_user.role == 'company' and current_user.public_id != item.company_id:
@@ -65,13 +63,12 @@ def get_item(current_user, item_id):
 @token_required
 def add_item(current_user):
     """Create a new item"""
-    roles = ['admin', 'company']
     if current_user.role not in roles:
         return jsonify({'Error': 'Invalid access'}), 403
 
     data = request.get_json()
     if not data:
-        abort(400, description="Not a valid JSON")
+        return jsonify({'Error': 'Not a valid JSON'}), 400
 
     # restricts companies from accessing other companies' profiles
     if current_user.role == 'company' and current_user.public_id != data.get('company_id'):
@@ -81,7 +78,7 @@ def add_item(current_user):
                        'stockamount', 'reorder_level', 'description', 'category', 'SKU']
     for field in required_fields:
         if field not in data:
-            abort(400, description=f"{field} is missing")
+            return jsonify({'Error': f'{field} is missing'}), 400
     # Calculate initial_stock based on stockamount
     data['initial_stock'] = data['stockamount']
     data["public_id"] = str(uuid.uuid4())
@@ -103,13 +100,12 @@ def add_item(current_user):
 @token_required
 def update_item(current_user, item_id):
     """Update an existing item"""
-    roles = ['admin', 'company']
     if current_user.role not in roles:
         return jsonify({'Error': 'Invalid access'}), 403
 
     data = request.get_json()
     if not data:
-        abort(400, description="Not a valid JSON")
+        return jsonify({'Error': 'Not a valid JSON'}), 400
 
     # restricts companies from accessing other companies' profiles
     if current_user.role == 'company' and current_user.id != data.get('company_id'):
@@ -119,7 +115,7 @@ def update_item(current_user, item_id):
 
     item = storage.get(Items, item_id)
     if not item:
-        abort(404, description="Item not found")
+        return jsonify({'Error': 'Item not found'}), 404
 
     for key, value in data.items():
         if key not in ignored_fields:
@@ -138,13 +134,12 @@ def update_item(current_user, item_id):
 @token_required
 def delete_item(current_user, item_id):
     """Delete an item"""
-    roles = ['admin', 'company']
     if current_user.role not in roles:
         jsonify({'Error': 'Invalid access'}), 403
 
     item = storage.get(Items, item_id)
     if not item:
-        abort(404, description="Item not found")
+        return jsonify({'Error': 'Item not found'}), 404
 
     # restricts companies from accessing other companies' profiles
     if current_user.role == 'company' and current_user.id != item.company_id:
