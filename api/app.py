@@ -2,18 +2,22 @@
 
 import sys
 import os
+from flasgger import Swagger
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from flask import Flask
 from api.views import app_views
 from models import storage
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = 'nyakundi'
 app.config['DEBUG'] = True
+
+# Initialize Swagger
+swagger = Swagger(app)
+
 # Registering app_views that has the routes
 app.register_blueprint(app_views)
-
 
 @app.teardown_appcontext
 def close_storage(exception):
