@@ -57,6 +57,8 @@ def company_sign_up():
         # Handle unique constraint violations for username, email, or phone_number
         if "username" in str(e.orig):
             return jsonify({'message': 'Username already exists'}), 409
+        elif "name" in str(e.orig):
+            return jsonify({'message': 'Company name already exists'}), 409
         elif "email" in str(e.orig):
             return jsonify({'message': 'Email already exists'}), 409
         elif "phone_number" in str(e.orig):
