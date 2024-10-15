@@ -108,7 +108,7 @@ def update_item(current_user, item_id):
         return jsonify({'Error': 'Not a valid JSON'}), 400
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'company' and current_user.id != data.get('company_id'):
+    if current_user.role == 'company' and current_user.public_id != data.get('company_id'):
         return jsonify({'Error': 'Invalid access'}), 403
 
     ignored_fields = ['id', 'created_at', 'updated_at']
@@ -119,7 +119,13 @@ def update_item(current_user, item_id):
 
     for key, value in data.items():
         if key not in ignored_fields:
-            setattr(item, key, value)
+            if key == 'stockamount':
+                # Update stockamount and adjust initial_stock
+                updated_stock = item.initial_stock + value
+                item.stockamount = value
+                item.initial_stock = updated_stock
+            else:
+                setattr(item, key, value)
     try: 
         storage.save()
     except IntegrityError as e:
@@ -142,7 +148,7 @@ def delete_item(current_user, item_id):
         return jsonify({'Error': 'Item not found'}), 404
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'company' and current_user.id != item.company_id:
+    if current_user.role == 'company' and current_user.public_id != item.company_id:
         jsonify({'Error': 'Invalid access'}), 403
 
     storage.delete(item)
