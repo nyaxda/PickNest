@@ -11,6 +11,7 @@ import uuid
 import jwt
 from .token_auth import token_required
 from .hash_password import hash_password, verify_password
+from flasgger import swag_from
 
 roles = ['admin', 'client']
 
@@ -97,6 +98,24 @@ def login():
 
 
 @app_views.route('/clients', methods=['GET'], strict_slashes=False)
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'A list of clients',
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {'type': 'integer'},
+                        'name': {'type': 'string'},
+                        'email': {'type': 'string'}
+                    }
+                }
+            }
+        }
+    }
+})
 @token_required
 def get_clients(current_user):
     """Retrieve list of all clients"""
@@ -109,6 +128,33 @@ def get_clients(current_user):
 
 
 @app_views.route('/clients/<client_id>', methods=['GET'], strict_slashes=False)
+@swag_from({
+    'parameters': [
+        {
+            'name': 'client_id',
+            'in': 'path',
+            'type': 'integer',
+            'required': True,
+            'description': 'ID of the client to retrieve'
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'A single client',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'id': {'type': 'integer'},
+                    'name': {'type': 'string'},
+                    'email': {'type': 'string'}
+                }
+            }
+        },
+        404: {
+            'description': 'Client not found'
+        }
+    }
+})
 @token_required
 def get_client(current_user, client_id):
     """Retrieve a client by ID"""
