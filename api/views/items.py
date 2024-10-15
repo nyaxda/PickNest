@@ -4,9 +4,10 @@
 from api.views import app_views
 from models import storage
 from models.items import Items
-from flask import jsonify, abort, request, make_response
+from flask import jsonify, abort, request
 from .token_auth import token_required
 from sqlalchemy.exc import IntegrityError
+import uuid
 
 
 
@@ -83,6 +84,7 @@ def add_item(current_user):
             abort(400, description=f"{field} is missing")
     # Calculate initial_stock based on stockamount
     data['initial_stock'] = data['stockamount']
+    data["public_id"] = str(uuid.uuid4())
 
     instance = Items(**data)
     try:
@@ -92,7 +94,7 @@ def add_item(current_user):
         if 'Duplicate' in str(e):
             return jsonify({'Error': 'Duplicate SKU'}), 400
         return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
-    return make_response(jsonify({"message": "Item Added Successfully"}), 201)
+    return jsonify({"message": "Item Added Successfully"}), 201
 
 
 
@@ -127,7 +129,7 @@ def update_item(current_user, item_id):
     except IntegrityError as e:
         return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
 
-    return make_response(jsonify(item.to_dict()), 200)
+    return jsonify(item.to_dict()), 200
 
 
 
@@ -150,4 +152,4 @@ def delete_item(current_user, item_id):
 
     storage.delete(item)
     storage.save()
-    return make_response(jsonify({}), 200)
+    return jsonify({}), 200
