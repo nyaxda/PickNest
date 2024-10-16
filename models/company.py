@@ -10,7 +10,6 @@ class Company(BaseModel):
     """Company Model"""
     __tablename__ = 'company'
     name = Column(String(255), nullable=False, unique=True)
-    public_id = Column(String(255), nullable=False, unique=True)
     username = Column(String(255), nullable=False, unique=True)
     hashed_password = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False, unique=True)
@@ -24,4 +23,6 @@ class Company(BaseModel):
     role = Column(String(20), nullable=False)
 
     # Relationship to Items
-    items = relationship("Items", back_populates="company")
+    items = relationship("Items",
+                         back_populates="company",
+                         cascade="all, delete-orphan")

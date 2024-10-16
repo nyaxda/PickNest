@@ -4,7 +4,7 @@
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, DateTime, create_engine
+from sqlalchemy import Column, Integer, String, DateTime
 from models import storage
 
 DATABASE_URI = 'mysql+pymysql://portfolio:holberton@localhost/picknest'
@@ -16,7 +16,8 @@ class BaseModel(Base):
     """Baseclass for other classes to inherit from"""
     # __abstract__ = True ensures that the model is not mapped to the database
     __abstract__ = True
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    public_id = Column(String(255), nullable=False,
+                       unique=True, primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow,
                         onupdate=datetime.utcnow)

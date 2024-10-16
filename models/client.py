@@ -9,7 +9,6 @@ from .basemodel import BaseModel
 class Client(BaseModel):
     """Client Model"""
     __tablename__ = 'client'
-    public_id = Column(String(255), nullable=False, unique=True)
     firstname = Column(String(255), nullable=False)
     middlename = Column(String(255), nullable=True)
     lastname = Column(String(255), nullable=False)
@@ -20,5 +19,9 @@ class Client(BaseModel):
     role = Column(String(20), nullable=False)
 
     # Relationship to Address and Orders
-    addresses = relationship("Address", back_populates="client")
-    orders = relationship("Orders", back_populates="client")
+    addresses = relationship("Address",
+                             back_populates="client",
+                             cascade="all, delete-orphan")
+    orders = relationship("Orders",
+                          back_populates="client",
+                          cascade="all, delete-orphan")

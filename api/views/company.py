@@ -21,7 +21,9 @@ def company_sign_up():
     data = request.get_json()
 
     # Check for required fields in the request
-    required_fields = ['name', 'username', 'password', 'email', 'phone_number', 'address1', 'city', 'state', 'zip', 'country']
+    required_fields = ['name', 'username',
+                       'password', 'email', 'phone_number',
+                       'address1', 'city', 'state', 'zip', 'country']
     for field in required_fields:
         if field not in data:
             return jsonify({'message': f'{field} is required'}), 400
@@ -54,7 +56,7 @@ def company_sign_up():
     except IntegrityError as e:
         storage.rollback()  # Rollback session in case of an error
 
-        # Handle unique constraint violations for username, email, or phone_number
+        # Handle unique constraint violations for username, email, or number
         if "username" in str(e.orig):
             return jsonify({'message': 'Username already exists'}), 409
         elif "name" in str(e.orig):
@@ -64,7 +66,8 @@ def company_sign_up():
         elif "phone_number" in str(e.orig):
             return jsonify({'message': 'Phone number already exists'}), 409
         else:
-            return jsonify({'message': 'An error occurred during registration'}), 500
+            return jsonify({'message':
+                            'An error occurred during registration'}), 500
 
     return jsonify({'message': 'Company registered successfully'}), 201
 
@@ -74,7 +77,8 @@ def company_login():
     """Login route for companies"""
     data = request.get_json()
 
-    if not data or not data.get('username') or not data.get('password') or not data.get('role'):
+    if (not data or not data.get('username') or
+            not data.get('password') or not data.get('role')):
         return make_response(jsonify({'message': 'Invalid input'}), 400)
 
     if data.get('role') != 'company':
@@ -82,7 +86,8 @@ def company_login():
 
     # Query the company by username
     all_companies = storage.all(Company)
-    company = next((comp for comp in all_companies if comp.username == data.get('username')), None)
+    company = next((comp for comp in all_companies if
+                    comp.username == data.get('username')), None)
     if not company:
         return jsonify({'message': 'Company not found!'}), 404
 
@@ -98,7 +103,8 @@ def company_login():
     }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
     return jsonify({'message': 'Company logged in successfully',
-        'token': token if isinstance(token, str) else token.decode('utf-8')})
+                    'token': token if
+                    isinstance(token, str) else token.decode('utf-8')})
 
 
 @app_views.route('/companies', methods=['GET'], strict_slashes=False)
@@ -113,7 +119,8 @@ def get_companies(current_user):
     return jsonify(list_companies)
 
 
-@app_views.route('/companies/<company_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/companies/<company_id>',
+                 methods=['GET'], strict_slashes=False)
 @token_required
 def get_company(current_user, company_id):
     """Retrieve a company by ID"""
@@ -124,7 +131,8 @@ def get_company(current_user, company_id):
     if not company:
         return jsonify({'message': 'Company not found'}), 404
 
-    if current_user.role == 'company' and current_user.public_id != company.public_id:
+    if (current_user.role == 'company' and
+            current_user.public_id != company.public_id):
         return jsonify({'message': 'Unauthorized access'}), 403
 
     return jsonify(company.to_dict())
@@ -140,21 +148,28 @@ def add_company(current_user):
     if not request.get_json():
         abort(400, description="Not a valid JSON")
 
-    required_fields = ['name', 'email', 'username', 'hashed_password', 'phone_number', 'address1', 'city', 'state', 'zip', 'country']
+    required_fields = ['name', 'email', 'username',
+                       'hashed_password', 'phone_number',
+                       'address1', 'city', 'state', 'zip', 'country']
     data = request.get_json()
 
     for field in required_fields:
         if field not in data:
             abort(400, description=f"{field} not found")
-
+    data["public_id"] = str(uuid.uuid4())
+    data["role"] = "company"
     instance = Company(**data)
     storage.new(instance)
-    storage.save()
+    try:
+        storage.save()
+    except IntegrityError as e:
+        return jsonify({'Error': 'Invalid data', 'message': str})
 
     return make_response(jsonify(instance.to_dict()), 201)
 
 
-@app_views.route('/companies/<company_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/companies/<company_id>',
+                 methods=['PUT'], strict_slashes=False)
 @token_required
 def update_company(current_user, company_id):
     """Updates a company"""
@@ -165,7 +180,7 @@ def update_company(current_user, company_id):
     if not data:
         return jsonify({'message': 'Not a valid JSON'}), 400
 
-    ignored_fields = ['id', 'created_at']
+    ignored_fields = ['id', 'created_at', 'updated_at', 'role']
 
     # Fetch the company from storage
     company = storage.get(Company, company_id)
@@ -173,28 +188,30 @@ def update_company(current_user, company_id):
         return jsonify({'message': 'Company not found'}), 404
 
     # Restrict access to only the company's own account if they are a company
-    if current_user.role == 'company' and current_user.public_id != company.public_id:
+    if (current_user.role == 'company' and
+            current_user.public_id != company.public_id):
         return jsonify({'message': 'Unauthorized access'}), 403
 
     for key, value in data.items():
-        if key not in ignored_fields:
-            if key == 'password':
-                # Hash the updated password
-                value = hash_password(value)
-                setattr(company, 'hashed_password', value)
-            else:
-                setattr(company, key, value)
+        if key in ignored_fields:
+            return jsonify({"Error": f"{key} cannot be modified"}), 400
+        elif key == 'password':
+            # Hash the updated password
+            value = hash_password(value)
+            setattr(company, 'hashed_password', value)
+        else:
+            setattr(company, key, value)
 
-    # Update the updated_at timestamp
-    setattr(company, 'updated_at', datetime.utcnow())
-
-    # Save changes to storage
-    storage.save()
+    try:
+        storage.save()
+    except IntegrityError as e:
+        return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
 
     return jsonify(company.to_dict()), 200
 
 
-@app_views.route('/companies/<company_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/companies/<company_id>',
+                 methods=['DELETE'], strict_slashes=False)
 @token_required
 def delete_company(current_user, company_id):
     """Delete a company by ID"""
@@ -205,11 +222,14 @@ def delete_company(current_user, company_id):
     if not company:
         abort(404, description="Company not found")
 
-    if current_user.role == 'company' and current_user.public_id != company.public_id:
+    if (current_user.role == 'company' and
+            current_user.public_id != company.public_id):
         return jsonify({'message': 'Unauthorized action'}), 403
-
-    storage.delete(company)
-    storage.save()
+    try:
+        storage.delete(company)
+        storage.save()
+    except IntegrityError as e:
+        return jsonify({'message':
+                        'An error occurred while deleting the company'}), 500
 
     return jsonify({'message': f'{company.name} removed'}), 200
-
