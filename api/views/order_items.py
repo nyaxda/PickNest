@@ -56,14 +56,16 @@ def add_order_item(current_user, order_id):
     for field in required_fields:
         if field not in data:
             return jsonify({"Error": f"{field} is required"}), 400
-    
+
     item = storage.get(Items, data['item_id'])
     if not item:
         return jsonify({"Error": "Item not found"}), 404
 
     # Check if the item_id already exists in the order_id
     order_items = storage.all(OrderItems)
-    existing_order_item = next((oi for oi in order_items if oi.order_id == order_id and oi.item_id == data['item_id']), None)
+    existing_order_item = next((oi for oi in order_items if
+                                oi.order_id == order_id and
+                                oi.item_id == data['item_id']), None)
     if existing_order_item:
         return jsonify({"Error": "Item already exists in the order"}), 400
 
@@ -72,7 +74,7 @@ def add_order_item(current_user, order_id):
     price_at_order_time = item.price * data['quantity_ordered']
 
     order_item = OrderItems(
-        public_id = str(uuid.uuid4()),
+        public_id=str(uuid.uuid4()),
         order_id=order_id,
         item_id=data['item_id'],
         quantity_ordered=data['quantity_ordered'],
@@ -97,12 +99,13 @@ def add_order_item(current_user, order_id):
 
         # Save the updated item
         storage.save()
-    
+
         return jsonify(order_item.to_dict()), 201
-    
+
     except IntegrityError as e:
         if 'check_quantity_ordered_gt0' in str(e.orig):
-            return jsonify({'Error': 'Quantity ordered should be 1 or more'}), 400 
+            return jsonify({
+                'Error': 'Quantity ordered should be 1 or more'}), 400
         return jsonify({'Error': 'Invalid data', 'message': str(e.orig)}), 400
 
 
@@ -115,7 +118,8 @@ def update_order_item(current_user, order_id, order_item_id):
         return jsonify({'Error': 'Invalid role'})
     if not request.get_json():
         return jsonify({"Error": "Not a valid JSON"}), 400
-    ignored_fields = ['public_id', 'created_at', 'updated_at', 'order_id', 'price_at_order_time']
+    ignored_fields = ['public_id', 'created_at', 'updated_at',
+                      'order_id', 'price_at_order_time']
     data = request.get_json()
     order_item = storage.get(OrderItems, order_item_id)
     if not order_item or order_item.order_id != order_id:
@@ -123,7 +127,8 @@ def update_order_item(current_user, order_id, order_item_id):
     item = storage.get(Items, order_item.item_id)
     if not item:
         return jsonify({"Error": "Item not found"}), 404
-    if data and 'quantity_ordered' in data and data['quantity_ordered'] > item.initial_stock:
+    if data and 'quantity_ordered' in data and \
+            data['quantity_ordered'] > item.initial_stock:
         return jsonify({"Error": "Insufficient stock"}), 400
     new_quantity = data.get('quantity_ordered', order_item.quantity_ordered)
     old_quantity = order_item.quantity_ordered
@@ -136,7 +141,7 @@ def update_order_item(current_user, order_id, order_item_id):
             return jsonify({"Error": "Insufficient stock"}), 400
         new_stock = item.initial_stock - stock_difference
         item.initial_stock = new_stock
-      
+
     elif new_quantity < old_quantity:
         # Restock the difference
         stock_difference = old_quantity - new_quantity
@@ -150,10 +155,11 @@ def update_order_item(current_user, order_id, order_item_id):
     order = storage.get(Orders, order_id)
     if not order:
         return jsonify({"Error": "Order not found"}), 404
-    
+
     # Calculate the new order total
-    order.order_total = order.order_total - order_item.price_at_order_time + new_price_at_order_time
-          
+    order.order_total = order.order_total - order_item.price_at_order_time \
+        + new_price_at_order_time
+
     for key, value in data.items():
         if key not in ignored_fields:
             setattr(order_item, key, value)
@@ -162,7 +168,8 @@ def update_order_item(current_user, order_id, order_item_id):
         return jsonify(order_item.to_dict()), 200
     except IntegrityError as e:
         if 'check_quantity_ordered_gt0' in str(e.orig):
-            return jsonify({'Error': 'Quantity ordered should be 1 or more'}), 400
+            return jsonify({
+                'Error': 'Quantity ordered should be 1 or more'}), 400
         return jsonify({'Error': 'Invalid data', 'message': str(e.orig)}), 400
 
 
@@ -190,6 +197,9 @@ def delete_order_item(current_user, order_id, item_id):
     try:
         storage.delete(order_item)
         storage.save()
-        return jsonify({"message": f"Deleted Order Item {order_item.public_id} successfully"}), 200
+        return jsonify({
+            "message":
+            f"Deleted Order Item {order_item.public_id} successfully"}), 200
     except IntegrityError as e:
-        return jsonify({"Error": f"An error occurred during deletion : {str(e)}"}), 400
+        return jsonify({
+            "Error": f"An error occurred during deletion : {str(e)}"}), 400
