@@ -11,6 +11,7 @@ import uuid
 
 roles = ['admin', 'company']
 
+
 @app_views.route('/companies/<company_id>/items',
                  methods=['GET'], strict_slashes=False)
 @token_required
@@ -28,6 +29,7 @@ def get_company_items(current_user, company_id):
                   item in all_items if item.company_id == company_id]
     return jsonify(list_items)
 
+
 @app_views.route('/items', methods=['GET'], strict_slashes=False)
 @token_required
 def get_all_items(current_user):
@@ -38,6 +40,7 @@ def get_all_items(current_user):
     all_items = storage.all(Items)
     list_items = [item.to_dict() for item in all_items]
     return jsonify(list_items)
+
 
 @app_views.route('/items/<item_id>',
                  methods=['GET'], strict_slashes=False)
@@ -57,7 +60,6 @@ def get_item(current_user, item_id):
     return jsonify(item.to_dict())
 
 
-
 @app_views.route('/items',
                  methods=['POST'], strict_slashes=False)
 @token_required
@@ -75,7 +77,7 @@ def add_item(current_user):
         return jsonify({'Error': 'Invalid access'}), 403
 
     required_fields = ['company_id', 'name',
-                       'stockamount', 'reorder_level', 'description', 'category', 'SKU']
+                       'stockamount', 'reorder_level', 'price', 'description', 'category', 'SKU']
     for field in required_fields:
         if field not in data:
             return jsonify({'Error': f'{field} is missing'}), 400
@@ -90,9 +92,14 @@ def add_item(current_user):
     except IntegrityError as e:
         if 'Duplicate' in str(e):
             return jsonify({'Error': 'Duplicate SKU'}), 400
+        if 'check_stockamount_non_negative' in str(e.orig):
+            return jsonify({'Error': 'Stock amount should be non-negative'}), 400
+        if 'check_initial_stock_non_negative' in str(e.orig):
+            return jsonify({'Error': 'Initial stock should be non-negative'}), 400
+        if 'check_reorder_level_non_negative' in str(e.orig):
+            return jsonify({'Error': 'Reorder level should be non-negative'}), 400
         return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
     return jsonify({"message": "Item Added Successfully"}), 201
-
 
 
 @app_views.route('/items/<item_id>',
@@ -111,28 +118,37 @@ def update_item(current_user, item_id):
     if current_user.role == 'company' and current_user.public_id != data.get('company_id'):
         return jsonify({'Error': 'Invalid access'}), 403
 
-    ignored_fields = ['id', 'created_at', 'updated_at']
+    ignored_fields = ['public_id', 'created_at', 'updated_at', 'company_id', 'initial_stock']
 
     item = storage.get(Items, item_id)
     if not item:
         return jsonify({'Error': 'Item not found'}), 404
 
     for key, value in data.items():
-        if key not in ignored_fields:
-            if key == 'stockamount':
+        if key in ignored_fields:
+            return jsonify({"Error": f"{key} cannot be modified"}), 400
+        elif key == 'stockamount':
+                if not isinstance(value, int) or value < 0:
+                    return jsonify({"Error": "Invalid stockamount"}), 400
                 # Update stockamount and adjust initial_stock
                 updated_stock = item.initial_stock + value
                 item.stockamount = value
                 item.initial_stock = updated_stock
-            else:
-                setattr(item, key, value)
+        else:
+            setattr(item, key, value)
+
     try: 
         storage.save()
     except IntegrityError as e:
-        return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
+        if 'check_stockamount_non_negative' in str(e.orig):
+            return jsonify({'Error': 'Stock amount should be non-negative'}), 400
+        if 'check_initial_stock_non_negative' in str(e.orig):
+            return jsonify({'Error': 'Initial stock should be non-negative'}), 400
+        if 'check_reorder_level_non_negative' in str(e.orig):
+            return jsonify({'Error': 'Reorder level should be non-negative'}), 400
+        return jsonify({'Error': 'Invalid data', 'message': str(e.orig)}), 400
 
     return jsonify(item.to_dict()), 200
-
 
 
 @app_views.route('/items/<item_id>',
@@ -150,7 +166,9 @@ def delete_item(current_user, item_id):
     # restricts companies from accessing other companies' profiles
     if current_user.role == 'company' and current_user.public_id != item.company_id:
         jsonify({'Error': 'Invalid access'}), 403
-
-    storage.delete(item)
-    storage.save()
-    return jsonify({}), 200
+    try:
+        storage.delete(item)
+        storage.save()
+        return jsonify({"message": f"Item {item.public_id} deleted successfully"}), 200
+    except IntegrityError as e:
+        return jsonify({"Error during deletion": f"{str(e)}"}), 400

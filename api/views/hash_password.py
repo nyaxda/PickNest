@@ -12,6 +12,7 @@ def hash_password(password: str) -> str:
     hashed_password = bcrypt.hashpw(password.encode(), salt)
     return hashed_password.decode()
 
+
 def verify_password(user_pass, hash):
     """used to verify a user on login"""
     return bcrypt.checkpw(user_pass.encode(), hash.encode())

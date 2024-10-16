@@ -22,7 +22,9 @@ def sign_up():
     data = request.get_json()
 
     # Check for required fields in the request
-    required_fields = ['username', 'password', 'firstname', 'lastname', 'email', 'phone']
+    required_fields = ['username', 'password',
+                       'firstname', 'lastname',
+                       'email', 'phone']
     for field in required_fields:
         if field not in data:
             return jsonify({'message': f'{field} is required'}), 400
@@ -50,7 +52,7 @@ def sign_up():
         storage.save()
 
     except IntegrityError as e:
-        storage.rollback() # Rollback session in case of an error
+        storage.rollback()  # Rollback session in case of an error
 
         # Handle unique constraint violations for username, email, or phone
         if "username" in str(e.orig):
@@ -60,7 +62,8 @@ def sign_up():
         elif "phone" in str(e.orig):
             return jsonify({'message': 'Phone number already exists'}), 409
         else:
-            return jsonify({'message': 'An error occurred during registration'}), 500
+            return jsonify({'message':
+                            'An error occurred during registration'}), 500
 
     return jsonify({'message': 'Client registered successfully'}), 201
 
@@ -70,7 +73,8 @@ def login():
     """Login route for clients"""
     data = request.get_json()
 
-    if not data or not data.get('username') or not data.get('password') or not data.get('role'):
+    if (not data or not data.get('username') or
+            not data.get('password') or not data.get('role')):
         return make_response(jsonify({'message': 'Invalid input'}), 400)
 
     if data.get('role') != 'client':
@@ -78,7 +82,8 @@ def login():
 
     # Query the client by username
     all_clients = storage.all(Client)
-    user = next((client for client in all_clients if client.username == data.get('username')), None)
+    user = next((client for client in all_clients if
+                 client.username == data.get('username')), None)
     if not user:
         return jsonify({'message': 'Client not found!'}), 404
 
@@ -94,7 +99,8 @@ def login():
     }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
     return jsonify({'message': 'Client logged in successfully',
-        'token': token if isinstance(token, str) else token.decode('utf-8')})
+                    'token': token if isinstance(token, str)
+                    else token.decode('utf-8')})
 
 
 @app_views.route('/clients', methods=['GET'], strict_slashes=False)
@@ -164,8 +170,9 @@ def get_client(current_user, client_id):
     client = storage.get(Client, client_id)
     if not client:
         return jsonify({'message': 'Client not found'}), 404
-    
-    if current_user.role == 'client' and current_user.public_id != client.public_id:
+
+    if (current_user.role == 'client' and
+            current_user.public_id != client.public_id):
         return jsonify({'message': 'Unauthorized access'}), 403
 
     return jsonify(client.to_dict())
@@ -181,7 +188,8 @@ def add_client(current_user):
     if not request.get_json():
         abort(400, description="Not a valid JSON")
 
-    required_fields = ['firstname', 'lastname', 'username', 'password', 'email', 'phone']
+    required_fields = ['firstname', 'lastname',
+                       'username', 'password', 'email', 'phone']
     data = request.get_json()
     for field in required_fields:
         if field not in data:
@@ -199,7 +207,7 @@ def add_client(current_user):
         storage.save()
 
     except IntegrityError as e:
-        storage.rollback() # Rollback session in case of an error
+        storage.rollback()  # Rollback session in case of an error
 
         # Handle unique constraint violations for username, email, or phone
         if "username" in str(e.orig):
@@ -209,7 +217,8 @@ def add_client(current_user):
         elif "phone" in str(e.orig):
             return jsonify({'message': 'Phone number already exists'}), 409
         else:
-            return jsonify({'message': f'An error occurred during registration: {e.orig}'}), 500
+            return jsonify({'message':
+                            f'Error during registration: {e.orig}'}), 500
 
     return jsonify({'message': 'User registered successfully'}), 201
 
@@ -234,7 +243,8 @@ def update_client(current_user, client_id):
         return jsonify({'message': 'Client not found'}), 404
 
     # Restrict access to only the client's own account if they are a client
-    if current_user.role == 'client' and current_user.id != client.id:
+    if (current_user.role == 'client' and
+            current_user.public_id != client.public_id):
         return jsonify({'message': 'Unauthorized access'}), 403
 
     for key, value in data.items():
@@ -246,16 +256,16 @@ def update_client(current_user, client_id):
             else:
                 setattr(client, key, value)
 
-    # Update the updated_at timestamp
-    setattr(client, 'updated_at', datetime.utcnow()) 
-
-    # Save changes to storage
-    storage.save()
+    try:
+        storage.save()
+    except IntegrityError as e:
+        return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
 
     return jsonify(client.to_dict()), 200
 
 
-@app_views.route('/clients/<client_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/clients/<client_id>',
+                 methods=['DELETE'], strict_slashes=False)
 @token_required
 def delete_client(current_user, client_id):
     """Delete a client by ID"""
@@ -266,7 +276,8 @@ def delete_client(current_user, client_id):
     if not client:
         abort(404, description="Client not found")
 
-    if current_user.role == 'client' and current_user.public_id != client.public_id:
+    if (current_user.role == 'client' and
+            current_user.public_id != client.public_id):
         return jsonify({'message': 'Unauthorized action'}), 403
 
     client_name = client.username

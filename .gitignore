@@ -1746,4 +1746,7 @@ models/__pycache__/storage.cpython-313.pyc
 tests/api/views/__pycache__/test_address.cpython-313.pyc
 tests/api/views/__pycache__/test_client.cpython-313.pyc
 .picknest/*
-*.pyc
+data_addition.py
+.flaskenv
+api/__pycache__/app.cpython-313.pyc
+models/__pycache__/admin.cpython-313.pyc

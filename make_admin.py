@@ -9,7 +9,8 @@ from models.basemodel import DATABASE_URI
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Make a client an admin.')
-parser.add_argument('client_id', type=int, help='The ID of the client to be made admin')
+parser.add_argument('client_id', type=str,
+                    help='The ID of the client to be made admin')
 args = parser.parse_args()
 
 engine = create_engine(DATABASE_URI)
@@ -20,7 +21,7 @@ session = Session()
 
 # Make client with specific id an admin
 client_id = args.client_id
-client = session.query(Client).get(client_id)
+client = session.query(Client).filter_by(public_id=client_id).first()
 if client:
     client.role = 'admin'
     session.commit()
