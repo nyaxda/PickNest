@@ -28,7 +28,9 @@ def token_required(fn):
 
         try:
             # Decode token
-            decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            decoded_token = jwt.decode(token,
+                                       app.config['SECRET_KEY'],
+                                       algorithms=['HS256'])
             # Obtain user role
             role = decoded_token.get('role')
             roles = ['client', 'company', 'admin']
@@ -37,9 +39,11 @@ def token_required(fn):
 
             # Get current user in the database based on the public_id
             if role == 'client':
-                current_user = storage.get(Client, decoded_token.get('public_id'))
+                current_user = storage.get(Client,
+                                           decoded_token.get('public_id'))
             elif role == 'company':
-                current_user = storage.get(Company, decoded_token.get('public_id'))
+                current_user = storage.get(Company,
+                                           decoded_token.get('public_id'))
 
             if not current_user:  # Token is valid but user doesn't exist
                 return jsonify({'Error': 'User not found'}), 404
