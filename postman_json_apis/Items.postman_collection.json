@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "5f954a15-6eb6-4a6b-9b1c-fc0e198e3e25",
+		"name": "Items",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create Item",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0NGE2ZGRjNC01NmJkLTRjNmUtYmU0Mi0wZWE5N2E5ZDNhYmUiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyODkzMjgwMH0.9asHLyr27274XFsLeMMMU6sMFS37G6xHvh7SYAk2DGA",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"company_id\": \"44a6ddc4-56bd-4c6e-be42-0ea97a9d3abe\",\n    \"name\": \"Organic Honey\",\n    \"stockamount\": 250,\n    \"description\": \"One jar of organic honey from Holberton Honey Farms.\",\n    \"category\": \"Food & Beverage\",\n    \"reorder_level\": 25,\n    \"SKU\": \"HONEY001\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/items/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"items",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All items by Company ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJlMGQxZmZjNC1jY2FiLTQ2ZGQtOWM4MC0xMWVjYjcyMWMyZDEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyODkzNDQxMn0.hmzSFvP7vf1VCDuv_DAvcTr1lQEyo3vzwAGykK7tfaA",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/e0d1ffc4-ccab-46dd-9c80-11ecb721c2d1/items",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						"e0d1ffc4-ccab-46dd-9c80-11ecb721c2d1",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Items as Admin or Client or Company",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJhM2M4ODM1MS01OTkxLTRmODYtOTVjZC1lN2FiNjNiNGQ2OGEiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4OTM0MzQyfQ.K-QHZm9OTH1uYlLdpsMgPEhHS3K7iWPIfoHeu9uJseo",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"company_id\": \"44a6ddc4-56bd-4c6e-be42-0ea97a9d3abe\",\n    \"name\": \"Organic Honey\",\n    \"stockamount\": 250,\n    \"description\": \"One jar of organic honey from Holberton Honey Farms.\",\n    \"category\": \"Food & Beverage\",\n    \"reorder_level\": 25,\n    \"SKU\": \"HONEY001\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/items/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"items",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Item by Item ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJlMGQxZmZjNC1jY2FiLTQ2ZGQtOWM4MC0xMWVjYjcyMWMyZDEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyODkzNjEyMH0.gi3Dax1frEkBR0W0KYSFtXpy_hiqodNBDPDD8NBAVJI",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/items/ebb4dfd6-8a55-11ef-a34b-90334eedbade",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"items",
+						"ebb4dfd6-8a55-11ef-a34b-90334eedbade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Item",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJlMGQxZmZjNC1jY2FiLTQ2ZGQtOWM4MC0xMWVjYjcyMWMyZDEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyOTAwMTk1MX0.9a3XFyoOdhBjddOSOJWs1m6sztRL_Ocim08Qb0oXFJE",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"company_id\": \"e0d1ffc4-ccab-46dd-9c80-11ecb721c2d1\",\n    \"stockamount\": 50\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/items/ebb59df4-8a55-11ef-a34b-90334eedbade",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"items",
+						"ebb59df4-8a55-11ef-a34b-90334eedbade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Item by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJlMGQxZmZjNC1jY2FiLTQ2ZGQtOWM4MC0xMWVjYjcyMWMyZDEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyOTAwMTk1MX0.9a3XFyoOdhBjddOSOJWs1m6sztRL_Ocim08Qb0oXFJE",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"company_id\": \"e0d1ffc4-ccab-46dd-9c80-11ecb721c2d1\",\n    \"stockamount\": 50\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/items/ebb59df4-8a55-11ef-a34b-90334eedbade",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"items",
+						"ebb59df4-8a55-11ef-a34b-90334eedbade"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "da359b72-747c-4b55-b0bc-2da26622a891",
+		"name": "Company",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" width=\"2162\" height=\"1530\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create a Company",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Vex Shoe Company Inc.\",\n    \"username\": \"shoe\",\n    \"password\": \"shoe\",\n    \"email\": \"vexshoecompany@gmail.com\",\n    \"phone_number\": 12345438,\n    \"address1\": \"123 Holberton St\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"zip\": 12345,\n    \"country\": \"USA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/sign_up",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						"sign_up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign In a Company",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Vex Shoe Company Inc.\",\n    \"username\": \"shoe\",\n    \"password\": \"shoe\",\n    \"email\": \"vexshoecompany@gmail.com\",\n    \"phone_number\": 12345438,\n    \"address1\": \"123 Holberton St\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"zip\": 12345,\n    \"country\": \"USA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/sign_up",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						"sign_up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Companies as Admin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJkNmY0YjY0Yy1iZGM2LTRjNjMtYjM0Ny0xMDYxNWRjNzYyYzEiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4ODQ3ODc2fQ.U6h86flkCAWT0x4lXj5Awb7I-OgPXFJmC6iCnxWQlAQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Vex Shoe Company Inc.\",\n    \"username\": \"shoe\",\n    \"password\": \"shoe\",\n    \"email\": \"vexshoecompany@gmail.com\",\n    \"phone_number\": 12345438,\n    \"address1\": \"123 Holberton St\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"zip\": 12345,\n    \"country\": \"USA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Company by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJmNDVmNjQwZi0xZWIzLTQ5MDQtOWM5Mi1iYjcxZGEwNmRkMjEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyODg0ODY4MX0.HyQBNu3RxlITCC2SgNXsm7NiWwzAb1EuuYU1H1BhtFI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Vex Shoe Company Inc.\",\n    \"username\": \"shoe\",\n    \"password\": \"shoe\",\n    \"email\": \"vexshoecompany@gmail.com\",\n    \"phone_number\": 12345438,\n    \"address1\": \"123 Holberton St\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"zip\": 12345,\n    \"country\": \"USA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/f45f640f-1eb3-4904-9c92-bb71da06dd21",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						"f45f640f-1eb3-4904-9c92-bb71da06dd21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Company by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJmNDVmNjQwZi0xZWIzLTQ5MDQtOWM5Mi1iYjcxZGEwNmRkMjEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyODg0ODY4MX0.HyQBNu3RxlITCC2SgNXsm7NiWwzAb1EuuYU1H1BhtFI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Vex Shoe Company Inc.\",\n    \"username\": \"shoe\",\n    \"password\": \"shoe\",\n    \"email\": \"vexshoecompany@gmail.com\",\n    \"phone_number\": 12345438,\n    \"address1\": \"123 Holberton St\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"zip\": 12345,\n    \"country\": \"USA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/f45f640f-1eb3-4904-9c92-bb71da06dd21",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						"f45f640f-1eb3-4904-9c92-bb71da06dd21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Company",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJlMGQxZmZjNC1jY2FiLTQ2ZGQtOWM4MC0xMWVjYjcyMWMyZDEiLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTcyODk5NzY4OH0.Wa926pavd8V4fCjyJ15mSHTotRiXenIPLw0AubXCDZk",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"city\": \"Houston\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/companies/e0d1ffc4-ccab-46dd-9c80-11ecb721c2d1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"companies",
+						"e0d1ffc4-ccab-46dd-9c80-11ecb721c2d1"
+					]
+				},
+				"description": "This HTTP PUT request is used to update the details of a specific company identified by the UUID provided in the URL. The request should include a JSON payload in the raw request body type with the updated \"city\" field.\n\n### Request Body\n\n- city (string, required): The updated city name for the company.\n    \n\n### Response\n\nUpon successful execution, the response will have a status code of 200 and a JSON object with the updated details of the company. The response includes the company's address, city, country, creation and update timestamps, email, password hash, ID, name, phone number, public ID, role, state, and zip code. The \"city\" field will reflect the updated value provided in the request.\n\nExample Response:\n\n``` json\n{\n    \"address1\": \"\",\n    \"address2\": \"\",\n    \"city\": \"Updated City Name\",\n    \"country\": \"\",\n    \"created_at\": \"\",\n    \"email\": \"\",\n    \"hashed_password\": \"\",\n    \"id\": 0,\n    \"name\": \"\",\n    \"phone_number\": \"\",\n    \"public_id\": \"\",\n    \"role\": \"\",\n    \"state\": \"\",\n    \"updated_at\": \"\",\n    \"username\": \"\",\n    \"zip\": \"\"\n}\n\n ```"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}

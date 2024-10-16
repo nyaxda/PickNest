@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "6e4d7f94-596b-4a5f-84e6-306345adae79",
+		"name": "Payments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create A Successful Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDgwNTE0fQ.TjAUkvQAvR0DwsviHFUVnXf0sv1qxTg6KBWeCkeJjCY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"transaction_reference_number\": \"81308232PS832\",\n    \"amount_paid\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/payments",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDgwNTE0fQ.TjAUkvQAvR0DwsviHFUVnXf0sv1qxTg6KBWeCkeJjCY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"transaction_reference_number\": \"81308232PS832\",\n    \"amount_paid\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/payments/7323f9a0-3083-495b-9b0d-d4fd4befd255",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"payments",
+						"7323f9a0-3083-495b-9b0d-d4fd4befd255"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payments by Order ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDgwNTE0fQ.TjAUkvQAvR0DwsviHFUVnXf0sv1qxTg6KBWeCkeJjCY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"transaction_reference_number\": \"81308232PS832\",\n    \"amount_paid\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/1362df61-6e40-4566-9cdc-8b9661025901/payments/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"1362df61-6e40-4566-9cdc-8b9661025901",
+						"payments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Payments as Admin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJjMzFiYWM0OS0zY2YxLTRkMGQtOTk0Ni0xZTliYjcxNTM2ZjgiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDgzNzE4fQ.bOkmvOcmMoliijV79YX3kaJZsjRMw49xyN52jxu4TTg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"transaction_reference_number\": \"81308232PS832\",\n    \"amount_paid\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/payments/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"payments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Payment",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDg0MTQ3fQ.WMcHleW71lZWMbzoPo8rpHMc8_8GaSY6p46-AQeeIJY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Currency\": \"USD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/payments/7323f9a0-3083-495b-9b0d-d4fd4befd255",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"payments",
+						"7323f9a0-3083-495b-9b0d-d4fd4befd255"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Payments by Client ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJjMzFiYWM0OS0zY2YxLTRkMGQtOTk0Ni0xZTliYjcxNTM2ZjgiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDgzNzE4fQ.bOkmvOcmMoliijV79YX3kaJZsjRMw49xyN52jxu4TTg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"transaction_reference_number\": \"81308232PS832\",\n    \"amount_paid\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/payments/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"payments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJjMzFiYWM0OS0zY2YxLTRkMGQtOTk0Ni0xZTliYjcxNTM2ZjgiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDgzNzE4fQ.bOkmvOcmMoliijV79YX3kaJZsjRMw49xyN52jxu4TTg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"transaction_reference_number\": \"81308232PS832\",\n    \"amount_paid\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/payments/7323f9a0-3083-495b-9b0d-d4fd4befd255",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"payments",
+						"7323f9a0-3083-495b-9b0d-d4fd4befd255"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

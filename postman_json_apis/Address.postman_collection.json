@@ -1,0 +1,302 @@
+{
+	"info": {
+		"_postman_id": "1418f1bf-b206-4e37-a17e-e0c78da241b8",
+		"name": "Address",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create Address",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDMxNTgzfQ.8OJ3sq1l9LKfV01pElbFB_EjtgbOj90dezR-ZZM1Vmk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"30648e85-8588-4e02-bcbd-208921bbd26f\",\n    \"address_line1\": \"728322 Langaeta St\",\n    \"city\": \"Nairobi\",\n    \"state\": \"Nairobi County\",\n    \"postal_code\": \"40200\",\n    \"country\": \"Kenya\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/addresses",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"addresses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Address by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI5OWM1N2QzZi0yZjAzLTQxNTMtYmQ5OS1mMjZmZmM2OTU1MDciLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4OTg3MzQ4fQ.BJAqvmGwskIHl3arWruMrGhzRT3KX55rwtdX88Q_4RQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"99c57d3f-2f03-4153-bd99-f26ffc695507\",\n    \"address_line1\": \"123 Highway St\",\n    \"city\": \"Nairobi\",\n    \"state\": \"Nairobi County\",\n    \"postal_code\": \"00100\",\n    \"country\": \"Kenya\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/addresses/d3875ff2-8adb-11ef-a34b-90334eedbade",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"addresses",
+						"d3875ff2-8adb-11ef-a34b-90334eedbade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Addresses by Client ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI5OWM1N2QzZi0yZjAzLTQxNTMtYmQ5OS1mMjZmZmM2OTU1MDciLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4OTk0NTg4fQ.xsGmKXV3QKJm3gw2w9VKW2eOQPO0XNkBSAsp4AoBk4A",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/99c57d3f-2f03-4153-bd99-f26ffc695507/addresses",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"99c57d3f-2f03-4153-bd99-f26ffc695507",
+						"addresses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Addresses as Admin",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJhM2M4ODM1MS01OTkxLTRmODYtOTVjZC1lN2FiNjNiNGQ2OGEiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4OTk2NjU4fQ.EQuQq8WwaTQB_IbUeChpMtq4lOWdPBvRl-AbeNAicSg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/addresses",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"addresses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Address by ID",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJhM2M4ODM1MS01OTkxLTRmODYtOTVjZC1lN2FiNjNiNGQ2OGEiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4OTk2NjU4fQ.EQuQq8WwaTQB_IbUeChpMtq4lOWdPBvRl-AbeNAicSg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"99c57d3f-2f03-4153-bd99-f26ffc695507\",\n    \"city\": \"Naivasha\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/addresses/dcfed426-1512-4936-9e06-a1bba18d819a",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"addresses",
+						"dcfed426-1512-4936-9e06-a1bba18d819a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Address by ID Copy",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJhM2M4ODM1MS01OTkxLTRmODYtOTVjZC1lN2FiNjNiNGQ2OGEiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4OTk2NjU4fQ.EQuQq8WwaTQB_IbUeChpMtq4lOWdPBvRl-AbeNAicSg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"99c57d3f-2f03-4153-bd99-f26ffc695507\",\n    \"city\": \"Naivasha\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/addresses/dcfed426-1512-4936-9e06-a1bba18d819a",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"addresses",
+						"dcfed426-1512-4936-9e06-a1bba18d819a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Address by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI5OWM1N2QzZi0yZjAzLTQxNTMtYmQ5OS1mMjZmZmM2OTU1MDciLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDA1MDYyfQ.TOsLpppyK7A3L7hG-xqC7kowpjvTKIpHGL5kYsBAHPQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"99c57d3f-2f03-4153-bd99-f26ffc695507\",\n    \"city\": \"Naivasha\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/addresses/f44f74bc-9ae9-485d-a6d2-96f31a7e474f",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"addresses",
+						"f44f74bc-9ae9-485d-a6d2-96f31a7e474f"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

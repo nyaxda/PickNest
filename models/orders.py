@@ -21,7 +21,7 @@ class Orders(BaseModel):
                          'Shipped',
                          'Delivered',
                          'Cancelled'), nullable=False)
-    order_total = Column(Float, nullable=False)
+    order_total = Column(Float, nullable=False, default=0)
 
     # Relationship to Client, Address, OrderItems, and Payments
     client = relationship("Client", back_populates="orders")

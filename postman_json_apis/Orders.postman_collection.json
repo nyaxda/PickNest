@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "f75bb139-7234-4591-8715-dbc6ef1383b0",
+		"name": "Orders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create an Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2Nzc2YmRmYi03YTRiLTRmMDAtYTY3Yy1kZDFhNmMxZThiNjMiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDEzNjc0fQ.UliSOmW6JuilEPhrFeqPFBiuvW3AeXqaug7Bf7QgbaY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"6776bdfb-7a4b-4f00-a67c-dd1a6c1e8b63\",\n    \"shipping_address_id\": \"f6505165-7d0f-4e43-99fa-6c887e7e6773\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "An Order by ID",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "All Orders as Admin",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2Nzc2YmRmYi03YTRiLTRmMDAtYTY3Yy1kZDFhNmMxZThiNjMiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDE3MjU2fQ.fHe1cNDa09L6EkYMbgk52GZjsgZdCz69kA_XoBNEawk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order by Client ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2Nzc2YmRmYi03YTRiLTRmMDAtYTY3Yy1kZDFhNmMxZThiNjMiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDE3MjU2fQ.fHe1cNDa09L6EkYMbgk52GZjsgZdCz69kA_XoBNEawk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/6776bdfb-7a4b-4f00-a67c-dd1a6c1e8b63/orders",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"6776bdfb-7a4b-4f00-a67c-dd1a6c1e8b63",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2Nzc2YmRmYi03YTRiLTRmMDAtYTY3Yy1kZDFhNmMxZThiNjMiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDI0NzU4fQ.8OqxAYnzIxQQKqxaPZRZSXAwA9ZgXxlyy4Bo78VH7hg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipping_address_id\": \"b9bbd88d-f0b0-41ac-bb14-5d9301f74392\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/0f442ab2-2016-4852-add1-786eb9e1c988",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"0f442ab2-2016-4852-add1-786eb9e1c988"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI2Nzc2YmRmYi03YTRiLTRmMDAtYTY3Yy1kZDFhNmMxZThiNjMiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDI0NzU4fQ.8OqxAYnzIxQQKqxaPZRZSXAwA9ZgXxlyy4Bo78VH7hg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipping_address_id\": \"b9bbd88d-f0b0-41ac-bb14-5d9301f74392\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/91dc0b75-fadb-4e50-853e-02d8b72c9ef4",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"91dc0b75-fadb-4e50-853e-02d8b72c9ef4"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
