@@ -49,13 +49,14 @@ def get_item(current_user, item_id):
     """Retrieve a specific item"""
     if current_user.role not in roles:
         return jsonify({'Error': 'Invalid access'}), 403
-    
+
     item = storage.get(Items, item_id)
     if not item:
         return jsonify({'Error': 'Item not found'}), 404
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'company' and current_user.public_id != item.company_id:
+    if (current_user.role == 'company' and
+            current_user.public_id != item.company_id):
         return jsonify({'Error': 'Invalid access'}), 403
     return jsonify(item.to_dict())
 
@@ -73,11 +74,13 @@ def add_item(current_user):
         return jsonify({'Error': 'Not a valid JSON'}), 400
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'company' and current_user.public_id != data.get('company_id'):
+    if (current_user.role == 'company' and
+            current_user.public_id != data.get('company_id')):
         return jsonify({'Error': 'Invalid access'}), 403
 
     required_fields = ['company_id', 'name',
-                       'stockamount', 'reorder_level', 'price', 'description', 'category', 'SKU']
+                       'stockamount', 'reorder_level',
+                       'price', 'description', 'category', 'SKU']
     for field in required_fields:
         if field not in data:
             return jsonify({'Error': f'{field} is missing'}), 400
@@ -93,12 +96,16 @@ def add_item(current_user):
         if 'Duplicate' in str(e):
             return jsonify({'Error': 'Duplicate SKU'}), 400
         if 'check_stockamount_non_negative' in str(e.orig):
-            return jsonify({'Error': 'Stock amount should be non-negative'}), 400
+            return jsonify({'Error':
+                            'Stock amount should be non-negative'}), 400
         if 'check_initial_stock_non_negative' in str(e.orig):
-            return jsonify({'Error': 'Initial stock should be non-negative'}), 400
+            return jsonify({'Error':
+                            'Initial stock should be non-negative'}), 400
         if 'check_reorder_level_non_negative' in str(e.orig):
-            return jsonify({'Error': 'Reorder level should be non-negative'}), 400
-        return jsonify({'Error': 'Invalid data', 'message': str(e)}), 400
+            return jsonify({'Error':
+                            'Reorder level should be non-negative'}), 400
+        return jsonify({'Error':
+                        'Invalid data', 'message': str(e)}), 400
     return jsonify({"message": "Item Added Successfully"}), 201
 
 
@@ -115,10 +122,12 @@ def update_item(current_user, item_id):
         return jsonify({'Error': 'Not a valid JSON'}), 400
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'company' and current_user.public_id != data.get('company_id'):
+    if (current_user.role == 'company' and
+            current_user.public_id != data.get('company_id')):
         return jsonify({'Error': 'Invalid access'}), 403
 
-    ignored_fields = ['public_id', 'created_at', 'updated_at', 'company_id', 'initial_stock']
+    ignored_fields = ['public_id', 'created_at',
+                      'updated_at', 'company_id', 'initial_stock']
 
     item = storage.get(Items, item_id)
     if not item:
@@ -128,25 +137,29 @@ def update_item(current_user, item_id):
         if key in ignored_fields:
             return jsonify({"Error": f"{key} cannot be modified"}), 400
         elif key == 'stockamount':
-                if not isinstance(value, int) or value < 0:
-                    return jsonify({"Error": "Invalid stockamount"}), 400
-                # Update stockamount and adjust initial_stock
-                updated_stock = item.initial_stock + value
-                item.stockamount = value
-                item.initial_stock = updated_stock
+            if not isinstance(value, int) or value < 0:
+                return jsonify({"Error": "Invalid stockamount"}), 400
+            # Update stockamount and adjust initial_stock
+            updated_stock = item.initial_stock + value
+            item.stockamount = value
+            item.initial_stock = updated_stock
         else:
             setattr(item, key, value)
 
-    try: 
+    try:
         storage.save()
     except IntegrityError as e:
         if 'check_stockamount_non_negative' in str(e.orig):
-            return jsonify({'Error': 'Stock amount should be non-negative'}), 400
+            return jsonify({'Error':
+                            'Stock amount should be non-negative'}), 400
         if 'check_initial_stock_non_negative' in str(e.orig):
-            return jsonify({'Error': 'Initial stock should be non-negative'}), 400
+            return jsonify({'Error':
+                            'Initial stock should be non-negative'}), 400
         if 'check_reorder_level_non_negative' in str(e.orig):
-            return jsonify({'Error': 'Reorder level should be non-negative'}), 400
-        return jsonify({'Error': 'Invalid data', 'message': str(e.orig)}), 400
+            return jsonify({'Error':
+                            'Reorder level should be non-negative'}), 400
+        return jsonify({'Error':
+                        'Invalid data', 'message': str(e.orig)}), 400
 
     return jsonify(item.to_dict()), 200
 
@@ -164,11 +177,13 @@ def delete_item(current_user, item_id):
         return jsonify({'Error': 'Item not found'}), 404
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'company' and current_user.public_id != item.company_id:
+    if (current_user.role == 'company' and
+            current_user.public_id != item.company_id):
         jsonify({'Error': 'Invalid access'}), 403
     try:
         storage.delete(item)
         storage.save()
-        return jsonify({"message": f"Item {item.public_id} deleted successfully"}), 200
+        return jsonify({"message":
+                        f"Item {item.public_id} deleted successfully"}), 200
     except IntegrityError as e:
         return jsonify({"Error during deletion": f"{str(e)}"}), 400

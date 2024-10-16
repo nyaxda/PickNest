@@ -13,6 +13,7 @@ import uuid
 
 roles = ['admin', 'client']
 
+
 @app_views.route('/orders', methods=['GET'], strict_slashes=False)
 @token_required
 def get_all_orders(current_user):
@@ -25,6 +26,7 @@ def get_all_orders(current_user):
     list_orders = [order.to_dict() for order in all_orders]
     return jsonify(list_orders)
 
+
 @app_views.route('/clients/<client_id>/orders',
                  methods=['GET'], strict_slashes=False)
 @token_required
@@ -34,13 +36,15 @@ def get_client_orders(current_user, client_id):
         return jsonify({'Error': 'Invalid access'}), 403
 
     # restricts companies from accessing other companies' profiles
-    if current_user.role == 'client' and current_user.public_id != client_id:
+    if (current_user.role == 'client' and
+            current_user.public_id != client_id):
         return jsonify({'Error': 'Invalid access'}), 403
 
     all_orders = storage.all(Orders)
     list_orders = [order.to_dict() for
-                  order in all_orders if order.client_id == client_id]
+                   order in all_orders if order.client_id == client_id]
     return jsonify(list_orders)
+
 
 @app_views.route('/orders/<order_id>', methods=['GET'], strict_slashes=False)
 @token_required
@@ -55,7 +59,8 @@ def get_order(current_user, order_id):
         return jsonify({"Error": "Order not found"}), 404
 
     # restrict clients accessing other client orders
-    if current_user.role == 'client' and current_user.public_id != order.client_id:
+    if (current_user.role == 'client' and
+            current_user.public_id != order.client_id):
         return jsonify({'Error': 'Invalid access'}), 403
 
     return jsonify(order.to_dict())
@@ -82,7 +87,8 @@ def add_order(current_user):
     client = storage.get(Client, data['client_id'])
     address = storage.get(Address, data['shipping_address_id'])
 
-    # confirm if address is associated with the client through client_id foreign key in address table
+    # confirm if address is associated with the
+    # client through client_id foreign key in address table
     if address and client.public_id != address.client_id:
         return jsonify({"Error": "Address not associated with client"}), 400
 
@@ -92,9 +98,10 @@ def add_order(current_user):
         return jsonify({"Error": "Address not found"}), 400
 
     # restrict unrestricted user access
-    if current_user.role == 'client' and current_user.public_id != data.get('client_id'):
+    if (current_user.role == 'client' and
+            current_user.public_id != data.get('client_id')):
         return jsonify({'Error': 'Invalid access'}), 403
-    
+
     # Ensure order_total is not set or modified
     if 'order_total' in data:
         return jsonify({"Error": "Order total cannot be set manually"}), 400
@@ -110,9 +117,11 @@ def add_order(current_user):
         if 'status' in str(e.orig):
             return jsonify({
                 "Error":
-                "Invalid status value. Valid values are Pending, Shipped, Delivered, Cancelled"
+                "Invalid status value. Valid values are \
+                    Pending, Shipped, Delivered, Cancelled"
             }), 400
-        return jsonify({'Error': 'Integrity error occurred', 'Message': str(e)}), 400
+        return jsonify({'Error':
+                        'Integrity error occurred', 'Message': str(e)}), 400
 
     return jsonify(instance.to_dict()), 201
 
@@ -134,10 +143,12 @@ def update_order(current_user, order_id):
         return jsonify({"Error": "Order not found"}), 404
 
     # restrict unrestricted user access
-    if current_user.role == 'client' and current_user.public_id != order.client_id:
+    if (current_user.role == 'client' and
+            current_user.public_id != order.client_id):
         return jsonify({'Error': 'Invalid access'}), 403
 
-    ignored_fields = ['id', 'created_at', 'updated_at', 'client_id', 'order_total']
+    ignored_fields = ['id', 'created_at',
+                      'updated_at', 'client_id', 'order_total']
 
     for key, value in data.items():
         if key in ignored_fields:
@@ -154,7 +165,7 @@ def update_order(current_user, order_id):
             setattr(order, key, value)
         else:
             return jsonify({"Error": f"Invalid attribute {key}"}), 400
-  
+
     try:
         storage.save()
     except IntegrityError as e:
@@ -177,11 +188,14 @@ def delete_order(current_user, order_id):
         return jsonify({"Error": "Order not found"}), 404
 
     # restrict unrestricted user access
-    if current_user.role == 'client' and current_user.public_id != order.client_id:
+    if (current_user.role == 'client' and
+            current_user.public_id != order.client_id):
         return jsonify({'Error': 'Invalid access'}), 403
     try:
         storage.delete(order)
         storage.save()
-        return jsonify({"message": f"Deleted Order {order.public_id} successfully"}), 200
+        return jsonify({"message":
+                        f"Deleted Order {order.public_id} successfully"}), 200
     except IntegrityError as e:
-        return jsonify({"Error": f"An error occurred during deletion : {str(e)}"}), 400
+        return jsonify({"Error":
+                        f"An error occurred during deletion: {str(e)}"}), 400
