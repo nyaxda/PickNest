@@ -1,0 +1,312 @@
+{
+	"info": {
+		"_postman_id": "93021076-bded-450b-be46-c75a6430405a",
+		"name": "Client",
+		"description": "CRUD Operations on Client",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstname\": \"Daniel\",\n  \"lastname\": \"Nyakundi\",\n  \"username\": \"NyaxDa\",\n  \"password\": \"Kenyatta1234\",\n  \"email\": \"nyaxdae@gmail.com\",\n  \"phone\": \"0707919350\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/sign_up",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"sign_up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign In User as Admin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"NyaxDa\",\n    \"password\": \"Kenyatta1234\",\n    \"role\": \"client\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign In User as Client",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"CollinsDv\",\n    \"password\": \"Kenyatta1234\",\n    \"role\": \"client\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Clients as Admin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJhNDg4OTI1YS1hYjFjLTQ5OTItODU0YS0yMWMyMDIwNTIxODkiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4ODM5NzY0fQ.vYpRc4PJQ02i5ha1HEmfh-R14roKgbDL6_-ztjRP5-k",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Specific Client by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJhNDg4OTI1YS1hYjFjLTQ5OTItODU0YS0yMWMyMDIwNTIxODkiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4ODM5NzY0fQ.vYpRc4PJQ02i5ha1HEmfh-R14roKgbDL6_-ztjRP5-k",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Client",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiJmYTRkOTc1MC01YTUzLTQzMTQtYTA1Ni0xZjg5MjFmNWY4ZDciLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4ODQyNjI2fQ.c4BsxCCs8AHLp3PIXmn8NIttNSJsfucdt1aPlHKnfPY",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstname\": \"Collombo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/fa4d9750-5a53-4314-a056-1f8921f5f8d7",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"fa4d9750-5a53-4314-a056-1f8921f5f8d7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Client",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIxNmJmMTFlNS04ZmE0LTRmZGYtODY1ZC05NjdjN2EwZDI1MmIiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI4ODQzMjI1fQ.BYWAVQBtTsI9zauOEFiFjDDMEH21jCufzNiz9hyMc4c",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"firstname\": \"Holberton\",\n  \"lastname\": \"School\",\n  \"username\": \"ALXAfrica\",\n  \"password\": \"Kenyatta1234\",\n  \"email\": \"alxafrica@gmail.com\",\n  \"phone\": \"0707923343\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/clients/784e509e-1102-4500-bf9f-c54267c1bb5e",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"clients",
+						"784e509e-1102-4500-bf9f-c54267c1bb5e"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,202 @@
+{
+	"info": {
+		"_postman_id": "9afa24c2-cb07-4ff8-8306-1991a85f7323",
+		"name": "Order Items",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38954617"
+	},
+	"item": [
+		{
+			"name": "Create Order Item",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDMyMTk0fQ.O7UIu-KDUA50DAZOVqNs3Q1aI1cOrLS8I-XhBhq0WtA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"item_id\":\"2c3e6175-3c54-4758-a0c9-15c299e39b4d\",\n    \"quantity_ordered\": 6\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/1362df61-6e40-4566-9cdc-8b9661025901/order_items",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"1362df61-6e40-4566-9cdc-8b9661025901",
+						"order_items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order Item by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDM4MTM4fQ.9cZt7irA3WMndudo33XxARu2kNaqUw7-K64XKAON8OE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/1362df61-6e40-4566-9cdc-8b9661025901/order_items/3efeb8c6-5328-495a-95aa-a7b7000e0458",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"1362df61-6e40-4566-9cdc-8b9661025901",
+						"order_items",
+						"3efeb8c6-5328-495a-95aa-a7b7000e0458"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Order Items by Order ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDM4MTM4fQ.9cZt7irA3WMndudo33XxARu2kNaqUw7-K64XKAON8OE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/1362df61-6e40-4566-9cdc-8b9661025901/order_items/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"1362df61-6e40-4566-9cdc-8b9661025901",
+						"order_items",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order Item",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDM4MTM4fQ.9cZt7irA3WMndudo33XxARu2kNaqUw7-K64XKAON8OE",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\": \"1362df61-6e40-4566-9cdc-8b9661025901\",\n    \"public_id\": \"2c3e6175-3c54-4758-a0c9-15c299e39b4d\",\n    \"quantity_ordered\": 20\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/1362df61-6e40-4566-9cdc-8b9661025901/order_items/3efeb8c6-5328-495a-95aa-a7b7000e0458",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"1362df61-6e40-4566-9cdc-8b9661025901",
+						"order_items",
+						"3efeb8c6-5328-495a-95aa-a7b7000e0458"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order Item by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIzMDY0OGU4NS04NTg4LTRlMDItYmNiZC0yMDg5MjFiYmQyNmYiLCJyb2xlIjoiY2xpZW50IiwiZXhwIjoxNzI5MDQ1OTg4fQ.9bq362jKgT3u9M_8OoFWb2ehXShHGO4uVgxxFMRWxXc",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/orders/1362df61-6e40-4566-9cdc-8b9661025901/order_items/71e8dd1c-7e10-40d6-bb2a-f9f8c30ae567",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"orders",
+						"1362df61-6e40-4566-9cdc-8b9661025901",
+						"order_items",
+						"71e8dd1c-7e10-40d6-bb2a-f9f8c30ae567"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

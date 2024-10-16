@@ -33,8 +33,9 @@ def get_company_items(current_user, company_id):
 @app_views.route('/items', methods=['GET'], strict_slashes=False)
 @token_required
 def get_all_items(current_user):
-    """Retrieve all items, only accessible by admin"""
-    if current_user.role != 'admin':
+    """Retrieve all items"""
+    all_roles = ['admin', 'client', 'company']
+    if current_user.role not in all_roles:
         return jsonify({'Error': 'Unauthorized access'}), 403
 
     all_items = storage.all(Items)
